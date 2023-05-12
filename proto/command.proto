@@ -5,6 +5,11 @@ enum CommandType {
   MINT_NFT = 1;
   TRANSFER_NFT = 2;
   CREATE_AMM = 3;
+  ADD_LIQUIDITY = 4;
+  REMOVE_LIQUIDITY = 5;
+  SWAP = 6;
+  DEPOSIT_FUNDS = 7;
+  WITHDRAW_FUNDS = 8;
 };
 
 message Command {
@@ -15,19 +20,43 @@ message Command {
 }
 
 message MintNFTPayload {
-    bytes hash = 1;
-    bytes owner = 2;
+  bytes hash = 1;
+  bytes owner = 2;
 }
 
 message TransferNFTPayload {
-    bytes hash = 1;
-    bytes to = 2;
+  bytes hash = 1;
+  bytes to = 2;
 }
 
-message CreateAmmDaoPatload {
-    bytes token1 = 1;
-    bytes token2 = 2;
+message CreateAMMPayload {
+  bytes token1 = 1;
+  bytes token2 = 2;
 
-    int32 token1_balance = 3;
-    int32 token2_balance = 4;
+  int32 token1_balance = 3;
+  int32 token2_balance = 4;
+}
+
+message AddLiquidityPayload {
+  uint64 amount1 = 1;
+  uint64 amount2 = 2;
+}
+
+message RemoveLiquidityPayload {
+  uint64 share = 1;
+}
+
+message SwapTokensPayload {
+  uint64 amount1 = 1;
+  uint64 amount2 = 2;
+}
+
+message DepositFundsPayload {
+  uint64 amount1 = 1;
+  uint64 amount2 = 2;
+}
+
+message WithdrawFundsPayload {
+  uint64 amount1 = 1;
+  uint64 amount2 = 2;
 }

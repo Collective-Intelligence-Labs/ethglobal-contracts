@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 
 import "@lazyledger/protobuf3-solidity-lib/contracts/ProtobufLib.sol";
 
-enum CommandType { UNSPECIFIED, MINT_NFT, TRANSFER_NFT, CREATE_AMM }
+enum CommandType { UNSPECIFIED, MINT_NFT, TRANSFER_NFT, CREATE_AMM, ADD_LIQUIDITY, REMOVE_LIQUIDITY, SWAP, DEPOSIT_FUNDS, WITHDRAW_FUNDS }
 
 struct Command {
     bytes aggregate_id;
@@ -203,7 +203,7 @@ library CommandCodec {
         }
 
         // Check that value is within enum range
-        if (v < 0 || v > 3) {
+        if (v < 0 || v > 8) {
             return (false, pos);
         }
 
@@ -235,6 +235,113 @@ library CommandCodec {
         pos = pos + len;
 
         return (true, pos);
+    }
+
+    // Holds encoded version of message
+    struct Command__Encoded {
+        bytes aggregate_id__Key;
+        bytes aggregate_id__Length;
+        bytes aggregate_id;
+        bytes cmd_signature__Key;
+        bytes cmd_signature__Length;
+        bytes cmd_signature;
+        bytes cmd_type__Key;
+        bytes cmd_type;
+        bytes cmd_payload__Key;
+        bytes cmd_payload__Length;
+        bytes cmd_payload;
+    }
+
+    // Holds encoded version of nested message
+    struct Command__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(Command memory instance) internal pure returns (bytes memory) {
+        Command__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding aggregate_id if default value
+        if (bytes(instance.aggregate_id).length > 0) {
+            // Encode key for aggregate_id
+            encodedInstance.aggregate_id__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode aggregate_id
+            encodedInstance.aggregate_id__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.aggregate_id).length));
+            encodedInstance.aggregate_id = bytes(instance.aggregate_id);
+        }
+
+        // Omit encoding cmd_signature if default value
+        if (bytes(instance.cmd_signature).length > 0) {
+            // Encode key for cmd_signature
+            encodedInstance.cmd_signature__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode cmd_signature
+            encodedInstance.cmd_signature__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.cmd_signature).length));
+            encodedInstance.cmd_signature = bytes(instance.cmd_signature);
+        }
+
+        // Omit encoding cmd_type if default value
+        if (uint64(instance.cmd_type) != 0) {
+            // Encode key for cmd_type
+            encodedInstance.cmd_type__Key = ProtobufLib.encode_key(3, uint64(ProtobufLib.WireType.Varint));
+            // Encode cmd_type
+            encodedInstance.cmd_type = ProtobufLib.encode_int32(int32(instance.cmd_type));
+        }
+
+        // Omit encoding cmd_payload if default value
+        if (bytes(instance.cmd_payload).length > 0) {
+            // Encode key for cmd_payload
+            encodedInstance.cmd_payload__Key = ProtobufLib.encode_key(4, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode cmd_payload
+            encodedInstance.cmd_payload__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.cmd_payload).length));
+            encodedInstance.cmd_payload = bytes(instance.cmd_payload);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.aggregate_id.length);
+        len += uint64(encodedInstance.cmd_signature.length);
+        len += uint64(encodedInstance.cmd_type.length);
+        len += uint64(encodedInstance.cmd_payload.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.aggregate_id.length) {
+            finalEncoded[index++] = encodedInstance.aggregate_id[j];
+        }
+        j = 0;
+        while (j < encodedInstance.cmd_signature.length) {
+            finalEncoded[index++] = encodedInstance.cmd_signature[j];
+        }
+        j = 0;
+        while (j < encodedInstance.cmd_type.length) {
+            finalEncoded[index++] = encodedInstance.cmd_type[j];
+        }
+        j = 0;
+        while (j < encodedInstance.cmd_payload.length) {
+            finalEncoded[index++] = encodedInstance.cmd_payload[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested Command, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, Command memory instance) internal pure returns (Command__Encoded__Nested memory) {
+        Command__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
     }
 
 }
@@ -389,6 +496,81 @@ library MintNFTPayloadCodec {
         return (true, pos);
     }
 
+    // Holds encoded version of message
+    struct MintNFTPayload__Encoded {
+        bytes hash__Key;
+        bytes hash__Length;
+        bytes hash;
+        bytes owner__Key;
+        bytes owner__Length;
+        bytes owner;
+    }
+
+    // Holds encoded version of nested message
+    struct MintNFTPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(MintNFTPayload memory instance) internal pure returns (bytes memory) {
+        MintNFTPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding hash if default value
+        if (bytes(instance.hash).length > 0) {
+            // Encode key for hash
+            encodedInstance.hash__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode hash
+            encodedInstance.hash__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.hash).length));
+            encodedInstance.hash = bytes(instance.hash);
+        }
+
+        // Omit encoding owner if default value
+        if (bytes(instance.owner).length > 0) {
+            // Encode key for owner
+            encodedInstance.owner__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode owner
+            encodedInstance.owner__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.owner).length));
+            encodedInstance.owner = bytes(instance.owner);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.hash.length);
+        len += uint64(encodedInstance.owner.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.hash.length) {
+            finalEncoded[index++] = encodedInstance.hash[j];
+        }
+        j = 0;
+        while (j < encodedInstance.owner.length) {
+            finalEncoded[index++] = encodedInstance.owner[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested MintNFTPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, MintNFTPayload memory instance) internal pure returns (MintNFTPayload__Encoded__Nested memory) {
+        MintNFTPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
+    }
+
 }
 
 struct TransferNFTPayload {
@@ -541,19 +723,94 @@ library TransferNFTPayloadCodec {
         return (true, pos);
     }
 
+    // Holds encoded version of message
+    struct TransferNFTPayload__Encoded {
+        bytes hash__Key;
+        bytes hash__Length;
+        bytes hash;
+        bytes to__Key;
+        bytes to__Length;
+        bytes to;
+    }
+
+    // Holds encoded version of nested message
+    struct TransferNFTPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(TransferNFTPayload memory instance) internal pure returns (bytes memory) {
+        TransferNFTPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding hash if default value
+        if (bytes(instance.hash).length > 0) {
+            // Encode key for hash
+            encodedInstance.hash__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode hash
+            encodedInstance.hash__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.hash).length));
+            encodedInstance.hash = bytes(instance.hash);
+        }
+
+        // Omit encoding to if default value
+        if (bytes(instance.to).length > 0) {
+            // Encode key for to
+            encodedInstance.to__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode to
+            encodedInstance.to__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.to).length));
+            encodedInstance.to = bytes(instance.to);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.hash.length);
+        len += uint64(encodedInstance.to.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.hash.length) {
+            finalEncoded[index++] = encodedInstance.hash[j];
+        }
+        j = 0;
+        while (j < encodedInstance.to.length) {
+            finalEncoded[index++] = encodedInstance.to[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested TransferNFTPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, TransferNFTPayload memory instance) internal pure returns (TransferNFTPayload__Encoded__Nested memory) {
+        TransferNFTPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
+    }
+
 }
 
-struct CreateAmmDaoPatload {
+struct CreateAMMPayload {
     bytes token1;
     bytes token2;
     int32 token1_balance;
     int32 token2_balance;
 }
 
-library CreateAmmDaoPatloadCodec {
-    function decode(uint64 initial_pos, bytes memory buf, uint64 len) internal pure returns (bool, uint64, CreateAmmDaoPatload memory) {
+library CreateAMMPayloadCodec {
+    function decode(uint64 initial_pos, bytes memory buf, uint64 len) internal pure returns (bool, uint64, CreateAMMPayload memory) {
         // Message instance
-        CreateAmmDaoPatload memory instance;
+        CreateAMMPayload memory instance;
         // Previous field number
         uint64 previous_field_number = 0;
         // Current position in the buffer
@@ -627,7 +884,7 @@ library CreateAmmDaoPatloadCodec {
         return false;
     }
 
-    function decode_field(uint64 initial_pos, bytes memory buf, uint64 len, uint64 field_number, CreateAmmDaoPatload memory instance) internal pure returns (bool, uint64) {
+    function decode_field(uint64 initial_pos, bytes memory buf, uint64 len, uint64 field_number, CreateAMMPayload memory instance) internal pure returns (bool, uint64) {
         uint64 pos = initial_pos;
 
         if (field_number == 1) {
@@ -673,8 +930,8 @@ library CreateAmmDaoPatloadCodec {
         return (false, pos);
     }
 
-    // CreateAmmDaoPatload.token1
-    function decode_1(uint64 pos, bytes memory buf, CreateAmmDaoPatload memory instance) internal pure returns (bool, uint64) {
+    // CreateAMMPayload.token1
+    function decode_1(uint64 pos, bytes memory buf, CreateAMMPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
         uint64 len;
@@ -698,8 +955,8 @@ library CreateAmmDaoPatloadCodec {
         return (true, pos);
     }
 
-    // CreateAmmDaoPatload.token2
-    function decode_2(uint64 pos, bytes memory buf, CreateAmmDaoPatload memory instance) internal pure returns (bool, uint64) {
+    // CreateAMMPayload.token2
+    function decode_2(uint64 pos, bytes memory buf, CreateAMMPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
         uint64 len;
@@ -723,8 +980,8 @@ library CreateAmmDaoPatloadCodec {
         return (true, pos);
     }
 
-    // CreateAmmDaoPatload.token1_balance
-    function decode_3(uint64 pos, bytes memory buf, CreateAmmDaoPatload memory instance) internal pure returns (bool, uint64) {
+    // CreateAMMPayload.token1_balance
+    function decode_3(uint64 pos, bytes memory buf, CreateAMMPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
         int32 v;
@@ -743,8 +1000,8 @@ library CreateAmmDaoPatloadCodec {
         return (true, pos);
     }
 
-    // CreateAmmDaoPatload.token2_balance
-    function decode_4(uint64 pos, bytes memory buf, CreateAmmDaoPatload memory instance) internal pure returns (bool, uint64) {
+    // CreateAMMPayload.token2_balance
+    function decode_4(uint64 pos, bytes memory buf, CreateAMMPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
         int32 v;
@@ -761,6 +1018,1126 @@ library CreateAmmDaoPatloadCodec {
         instance.token2_balance = v;
 
         return (true, pos);
+    }
+
+    // Holds encoded version of message
+    struct CreateAMMPayload__Encoded {
+        bytes token1__Key;
+        bytes token1__Length;
+        bytes token1;
+        bytes token2__Key;
+        bytes token2__Length;
+        bytes token2;
+        bytes token1_balance__Key;
+        bytes token1_balance;
+        bytes token2_balance__Key;
+        bytes token2_balance;
+    }
+
+    // Holds encoded version of nested message
+    struct CreateAMMPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(CreateAMMPayload memory instance) internal pure returns (bytes memory) {
+        CreateAMMPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding token1 if default value
+        if (bytes(instance.token1).length > 0) {
+            // Encode key for token1
+            encodedInstance.token1__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode token1
+            encodedInstance.token1__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.token1).length));
+            encodedInstance.token1 = bytes(instance.token1);
+        }
+
+        // Omit encoding token2 if default value
+        if (bytes(instance.token2).length > 0) {
+            // Encode key for token2
+            encodedInstance.token2__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode token2
+            encodedInstance.token2__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.token2).length));
+            encodedInstance.token2 = bytes(instance.token2);
+        }
+
+        // Omit encoding token1_balance if default value
+        if (uint64(instance.token1_balance) != 0) {
+            // Encode key for token1_balance
+            encodedInstance.token1_balance__Key = ProtobufLib.encode_key(3, uint64(ProtobufLib.WireType.Varint));
+            // Encode token1_balance
+            encodedInstance.token1_balance = ProtobufLib.encode_int32(instance.token1_balance);
+        }
+
+        // Omit encoding token2_balance if default value
+        if (uint64(instance.token2_balance) != 0) {
+            // Encode key for token2_balance
+            encodedInstance.token2_balance__Key = ProtobufLib.encode_key(4, uint64(ProtobufLib.WireType.Varint));
+            // Encode token2_balance
+            encodedInstance.token2_balance = ProtobufLib.encode_int32(instance.token2_balance);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.token1.length);
+        len += uint64(encodedInstance.token2.length);
+        len += uint64(encodedInstance.token1_balance.length);
+        len += uint64(encodedInstance.token2_balance.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.token1.length) {
+            finalEncoded[index++] = encodedInstance.token1[j];
+        }
+        j = 0;
+        while (j < encodedInstance.token2.length) {
+            finalEncoded[index++] = encodedInstance.token2[j];
+        }
+        j = 0;
+        while (j < encodedInstance.token1_balance.length) {
+            finalEncoded[index++] = encodedInstance.token1_balance[j];
+        }
+        j = 0;
+        while (j < encodedInstance.token2_balance.length) {
+            finalEncoded[index++] = encodedInstance.token2_balance[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested CreateAMMPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, CreateAMMPayload memory instance) internal pure returns (CreateAMMPayload__Encoded__Nested memory) {
+        CreateAMMPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
+    }
+
+}
+
+struct AddLiquidityPayload {
+    uint64 amount1;
+    uint64 amount2;
+}
+
+library AddLiquidityPayloadCodec {
+    function decode(uint64 initial_pos, bytes memory buf, uint64 len) internal pure returns (bool, uint64, AddLiquidityPayload memory) {
+        // Message instance
+        AddLiquidityPayload memory instance;
+        // Previous field number
+        uint64 previous_field_number = 0;
+        // Current position in the buffer
+        uint64 pos = initial_pos;
+
+        // Sanity checks
+        if (pos + len < pos) {
+            return (false, pos, instance);
+        }
+
+        while (pos - initial_pos < len) {
+            // Decode the key (field number and wire type)
+            bool success;
+            uint64 field_number;
+            ProtobufLib.WireType wire_type;
+            (success, pos, field_number, wire_type) = ProtobufLib.decode_key(pos, buf);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number is within bounds
+            if (field_number > 2) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number of monotonically increasing
+            if (field_number <= previous_field_number) {
+                return (false, pos, instance);
+            }
+
+            // Check that the wire type is correct
+            success = check_key(field_number, wire_type);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Actually decode the field
+            (success, pos) = decode_field(pos, buf, len, field_number, instance);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            previous_field_number = field_number;
+        }
+
+        // Decoding must have consumed len bytes
+        if (pos != initial_pos + len) {
+            return (false, pos, instance);
+        }
+
+        return (true, pos, instance);
+    }
+
+    function check_key(uint64 field_number, ProtobufLib.WireType wire_type) internal pure returns (bool) {
+        if (field_number == 1) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        if (field_number == 2) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        return false;
+    }
+
+    function decode_field(uint64 initial_pos, bytes memory buf, uint64 len, uint64 field_number, AddLiquidityPayload memory instance) internal pure returns (bool, uint64) {
+        uint64 pos = initial_pos;
+
+        if (field_number == 1) {
+            bool success;
+            (success, pos) = decode_1(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        if (field_number == 2) {
+            bool success;
+            (success, pos) = decode_2(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        return (false, pos);
+    }
+
+    // AddLiquidityPayload.amount1
+    function decode_1(uint64 pos, bytes memory buf, AddLiquidityPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount1 = v;
+
+        return (true, pos);
+    }
+
+    // AddLiquidityPayload.amount2
+    function decode_2(uint64 pos, bytes memory buf, AddLiquidityPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount2 = v;
+
+        return (true, pos);
+    }
+
+    // Holds encoded version of message
+    struct AddLiquidityPayload__Encoded {
+        bytes amount1__Key;
+        bytes amount1;
+        bytes amount2__Key;
+        bytes amount2;
+    }
+
+    // Holds encoded version of nested message
+    struct AddLiquidityPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(AddLiquidityPayload memory instance) internal pure returns (bytes memory) {
+        AddLiquidityPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding amount1 if default value
+        if (uint64(instance.amount1) != 0) {
+            // Encode key for amount1
+            encodedInstance.amount1__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount1
+            encodedInstance.amount1 = ProtobufLib.encode_uint64(instance.amount1);
+        }
+
+        // Omit encoding amount2 if default value
+        if (uint64(instance.amount2) != 0) {
+            // Encode key for amount2
+            encodedInstance.amount2__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount2
+            encodedInstance.amount2 = ProtobufLib.encode_uint64(instance.amount2);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.amount1.length) {
+            finalEncoded[index++] = encodedInstance.amount1[j];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2.length) {
+            finalEncoded[index++] = encodedInstance.amount2[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested AddLiquidityPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, AddLiquidityPayload memory instance) internal pure returns (AddLiquidityPayload__Encoded__Nested memory) {
+        AddLiquidityPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
+    }
+
+}
+
+struct RemoveLiquidityPayload {
+    uint64 share;
+}
+
+library RemoveLiquidityPayloadCodec {
+    function decode(uint64 initial_pos, bytes memory buf, uint64 len) internal pure returns (bool, uint64, RemoveLiquidityPayload memory) {
+        // Message instance
+        RemoveLiquidityPayload memory instance;
+        // Previous field number
+        uint64 previous_field_number = 0;
+        // Current position in the buffer
+        uint64 pos = initial_pos;
+
+        // Sanity checks
+        if (pos + len < pos) {
+            return (false, pos, instance);
+        }
+
+        while (pos - initial_pos < len) {
+            // Decode the key (field number and wire type)
+            bool success;
+            uint64 field_number;
+            ProtobufLib.WireType wire_type;
+            (success, pos, field_number, wire_type) = ProtobufLib.decode_key(pos, buf);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number is within bounds
+            if (field_number > 1) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number of monotonically increasing
+            if (field_number <= previous_field_number) {
+                return (false, pos, instance);
+            }
+
+            // Check that the wire type is correct
+            success = check_key(field_number, wire_type);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Actually decode the field
+            (success, pos) = decode_field(pos, buf, len, field_number, instance);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            previous_field_number = field_number;
+        }
+
+        // Decoding must have consumed len bytes
+        if (pos != initial_pos + len) {
+            return (false, pos, instance);
+        }
+
+        return (true, pos, instance);
+    }
+
+    function check_key(uint64 field_number, ProtobufLib.WireType wire_type) internal pure returns (bool) {
+        if (field_number == 1) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        return false;
+    }
+
+    function decode_field(uint64 initial_pos, bytes memory buf, uint64 len, uint64 field_number, RemoveLiquidityPayload memory instance) internal pure returns (bool, uint64) {
+        uint64 pos = initial_pos;
+
+        if (field_number == 1) {
+            bool success;
+            (success, pos) = decode_1(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        return (false, pos);
+    }
+
+    // RemoveLiquidityPayload.share
+    function decode_1(uint64 pos, bytes memory buf, RemoveLiquidityPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.share = v;
+
+        return (true, pos);
+    }
+
+    // Holds encoded version of message
+    struct RemoveLiquidityPayload__Encoded {
+        bytes share__Key;
+        bytes share;
+    }
+
+    // Holds encoded version of nested message
+    struct RemoveLiquidityPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(RemoveLiquidityPayload memory instance) internal pure returns (bytes memory) {
+        RemoveLiquidityPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding share if default value
+        if (uint64(instance.share) != 0) {
+            // Encode key for share
+            encodedInstance.share__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
+            // Encode share
+            encodedInstance.share = ProtobufLib.encode_uint64(instance.share);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.share.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.share.length) {
+            finalEncoded[index++] = encodedInstance.share[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested RemoveLiquidityPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, RemoveLiquidityPayload memory instance) internal pure returns (RemoveLiquidityPayload__Encoded__Nested memory) {
+        RemoveLiquidityPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
+    }
+
+}
+
+struct SwapTokensPayload {
+    uint64 amount1;
+    uint64 amount2;
+}
+
+library SwapTokensPayloadCodec {
+    function decode(uint64 initial_pos, bytes memory buf, uint64 len) internal pure returns (bool, uint64, SwapTokensPayload memory) {
+        // Message instance
+        SwapTokensPayload memory instance;
+        // Previous field number
+        uint64 previous_field_number = 0;
+        // Current position in the buffer
+        uint64 pos = initial_pos;
+
+        // Sanity checks
+        if (pos + len < pos) {
+            return (false, pos, instance);
+        }
+
+        while (pos - initial_pos < len) {
+            // Decode the key (field number and wire type)
+            bool success;
+            uint64 field_number;
+            ProtobufLib.WireType wire_type;
+            (success, pos, field_number, wire_type) = ProtobufLib.decode_key(pos, buf);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number is within bounds
+            if (field_number > 2) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number of monotonically increasing
+            if (field_number <= previous_field_number) {
+                return (false, pos, instance);
+            }
+
+            // Check that the wire type is correct
+            success = check_key(field_number, wire_type);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Actually decode the field
+            (success, pos) = decode_field(pos, buf, len, field_number, instance);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            previous_field_number = field_number;
+        }
+
+        // Decoding must have consumed len bytes
+        if (pos != initial_pos + len) {
+            return (false, pos, instance);
+        }
+
+        return (true, pos, instance);
+    }
+
+    function check_key(uint64 field_number, ProtobufLib.WireType wire_type) internal pure returns (bool) {
+        if (field_number == 1) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        if (field_number == 2) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        return false;
+    }
+
+    function decode_field(uint64 initial_pos, bytes memory buf, uint64 len, uint64 field_number, SwapTokensPayload memory instance) internal pure returns (bool, uint64) {
+        uint64 pos = initial_pos;
+
+        if (field_number == 1) {
+            bool success;
+            (success, pos) = decode_1(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        if (field_number == 2) {
+            bool success;
+            (success, pos) = decode_2(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        return (false, pos);
+    }
+
+    // SwapTokensPayload.amount1
+    function decode_1(uint64 pos, bytes memory buf, SwapTokensPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount1 = v;
+
+        return (true, pos);
+    }
+
+    // SwapTokensPayload.amount2
+    function decode_2(uint64 pos, bytes memory buf, SwapTokensPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount2 = v;
+
+        return (true, pos);
+    }
+
+    // Holds encoded version of message
+    struct SwapTokensPayload__Encoded {
+        bytes amount1__Key;
+        bytes amount1;
+        bytes amount2__Key;
+        bytes amount2;
+    }
+
+    // Holds encoded version of nested message
+    struct SwapTokensPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(SwapTokensPayload memory instance) internal pure returns (bytes memory) {
+        SwapTokensPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding amount1 if default value
+        if (uint64(instance.amount1) != 0) {
+            // Encode key for amount1
+            encodedInstance.amount1__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount1
+            encodedInstance.amount1 = ProtobufLib.encode_uint64(instance.amount1);
+        }
+
+        // Omit encoding amount2 if default value
+        if (uint64(instance.amount2) != 0) {
+            // Encode key for amount2
+            encodedInstance.amount2__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount2
+            encodedInstance.amount2 = ProtobufLib.encode_uint64(instance.amount2);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.amount1.length) {
+            finalEncoded[index++] = encodedInstance.amount1[j];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2.length) {
+            finalEncoded[index++] = encodedInstance.amount2[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested SwapTokensPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, SwapTokensPayload memory instance) internal pure returns (SwapTokensPayload__Encoded__Nested memory) {
+        SwapTokensPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
+    }
+
+}
+
+struct DepositFundsPayload {
+    uint64 amount1;
+    uint64 amount2;
+}
+
+library DepositFundsPayloadCodec {
+    function decode(uint64 initial_pos, bytes memory buf, uint64 len) internal pure returns (bool, uint64, DepositFundsPayload memory) {
+        // Message instance
+        DepositFundsPayload memory instance;
+        // Previous field number
+        uint64 previous_field_number = 0;
+        // Current position in the buffer
+        uint64 pos = initial_pos;
+
+        // Sanity checks
+        if (pos + len < pos) {
+            return (false, pos, instance);
+        }
+
+        while (pos - initial_pos < len) {
+            // Decode the key (field number and wire type)
+            bool success;
+            uint64 field_number;
+            ProtobufLib.WireType wire_type;
+            (success, pos, field_number, wire_type) = ProtobufLib.decode_key(pos, buf);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number is within bounds
+            if (field_number > 2) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number of monotonically increasing
+            if (field_number <= previous_field_number) {
+                return (false, pos, instance);
+            }
+
+            // Check that the wire type is correct
+            success = check_key(field_number, wire_type);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Actually decode the field
+            (success, pos) = decode_field(pos, buf, len, field_number, instance);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            previous_field_number = field_number;
+        }
+
+        // Decoding must have consumed len bytes
+        if (pos != initial_pos + len) {
+            return (false, pos, instance);
+        }
+
+        return (true, pos, instance);
+    }
+
+    function check_key(uint64 field_number, ProtobufLib.WireType wire_type) internal pure returns (bool) {
+        if (field_number == 1) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        if (field_number == 2) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        return false;
+    }
+
+    function decode_field(uint64 initial_pos, bytes memory buf, uint64 len, uint64 field_number, DepositFundsPayload memory instance) internal pure returns (bool, uint64) {
+        uint64 pos = initial_pos;
+
+        if (field_number == 1) {
+            bool success;
+            (success, pos) = decode_1(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        if (field_number == 2) {
+            bool success;
+            (success, pos) = decode_2(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        return (false, pos);
+    }
+
+    // DepositFundsPayload.amount1
+    function decode_1(uint64 pos, bytes memory buf, DepositFundsPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount1 = v;
+
+        return (true, pos);
+    }
+
+    // DepositFundsPayload.amount2
+    function decode_2(uint64 pos, bytes memory buf, DepositFundsPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount2 = v;
+
+        return (true, pos);
+    }
+
+    // Holds encoded version of message
+    struct DepositFundsPayload__Encoded {
+        bytes amount1__Key;
+        bytes amount1;
+        bytes amount2__Key;
+        bytes amount2;
+    }
+
+    // Holds encoded version of nested message
+    struct DepositFundsPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(DepositFundsPayload memory instance) internal pure returns (bytes memory) {
+        DepositFundsPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding amount1 if default value
+        if (uint64(instance.amount1) != 0) {
+            // Encode key for amount1
+            encodedInstance.amount1__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount1
+            encodedInstance.amount1 = ProtobufLib.encode_uint64(instance.amount1);
+        }
+
+        // Omit encoding amount2 if default value
+        if (uint64(instance.amount2) != 0) {
+            // Encode key for amount2
+            encodedInstance.amount2__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount2
+            encodedInstance.amount2 = ProtobufLib.encode_uint64(instance.amount2);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.amount1.length) {
+            finalEncoded[index++] = encodedInstance.amount1[j];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2.length) {
+            finalEncoded[index++] = encodedInstance.amount2[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested DepositFundsPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, DepositFundsPayload memory instance) internal pure returns (DepositFundsPayload__Encoded__Nested memory) {
+        DepositFundsPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
+    }
+
+}
+
+struct WithdrawFundsPayload {
+    uint64 amount1;
+    uint64 amount2;
+}
+
+library WithdrawFundsPayloadCodec {
+    function decode(uint64 initial_pos, bytes memory buf, uint64 len) internal pure returns (bool, uint64, WithdrawFundsPayload memory) {
+        // Message instance
+        WithdrawFundsPayload memory instance;
+        // Previous field number
+        uint64 previous_field_number = 0;
+        // Current position in the buffer
+        uint64 pos = initial_pos;
+
+        // Sanity checks
+        if (pos + len < pos) {
+            return (false, pos, instance);
+        }
+
+        while (pos - initial_pos < len) {
+            // Decode the key (field number and wire type)
+            bool success;
+            uint64 field_number;
+            ProtobufLib.WireType wire_type;
+            (success, pos, field_number, wire_type) = ProtobufLib.decode_key(pos, buf);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number is within bounds
+            if (field_number > 2) {
+                return (false, pos, instance);
+            }
+
+            // Check that the field number of monotonically increasing
+            if (field_number <= previous_field_number) {
+                return (false, pos, instance);
+            }
+
+            // Check that the wire type is correct
+            success = check_key(field_number, wire_type);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            // Actually decode the field
+            (success, pos) = decode_field(pos, buf, len, field_number, instance);
+            if (!success) {
+                return (false, pos, instance);
+            }
+
+            previous_field_number = field_number;
+        }
+
+        // Decoding must have consumed len bytes
+        if (pos != initial_pos + len) {
+            return (false, pos, instance);
+        }
+
+        return (true, pos, instance);
+    }
+
+    function check_key(uint64 field_number, ProtobufLib.WireType wire_type) internal pure returns (bool) {
+        if (field_number == 1) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        if (field_number == 2) {
+            return wire_type == ProtobufLib.WireType.Varint;
+        }
+
+        return false;
+    }
+
+    function decode_field(uint64 initial_pos, bytes memory buf, uint64 len, uint64 field_number, WithdrawFundsPayload memory instance) internal pure returns (bool, uint64) {
+        uint64 pos = initial_pos;
+
+        if (field_number == 1) {
+            bool success;
+            (success, pos) = decode_1(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        if (field_number == 2) {
+            bool success;
+            (success, pos) = decode_2(pos, buf, instance);
+            if (!success) {
+                return (false, pos);
+            }
+
+            return (true, pos);
+        }
+
+        return (false, pos);
+    }
+
+    // WithdrawFundsPayload.amount1
+    function decode_1(uint64 pos, bytes memory buf, WithdrawFundsPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount1 = v;
+
+        return (true, pos);
+    }
+
+    // WithdrawFundsPayload.amount2
+    function decode_2(uint64 pos, bytes memory buf, WithdrawFundsPayload memory instance) internal pure returns (bool, uint64) {
+        bool success;
+
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        if (!success) {
+            return (false, pos);
+        }
+
+        // Default value must be omitted
+        if (v == 0) {
+            return (false, pos);
+        }
+
+        instance.amount2 = v;
+
+        return (true, pos);
+    }
+
+    // Holds encoded version of message
+    struct WithdrawFundsPayload__Encoded {
+        bytes amount1__Key;
+        bytes amount1;
+        bytes amount2__Key;
+        bytes amount2;
+    }
+
+    // Holds encoded version of nested message
+    struct WithdrawFundsPayload__Encoded__Nested {
+        bytes key;
+        bytes length;
+        bytes nestedInstance;
+    }
+
+    function encode(WithdrawFundsPayload memory instance) internal pure returns (bytes memory) {
+        WithdrawFundsPayload__Encoded memory encodedInstance;
+        uint64 len;
+        uint64 index;
+
+        // Omit encoding amount1 if default value
+        if (uint64(instance.amount1) != 0) {
+            // Encode key for amount1
+            encodedInstance.amount1__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount1
+            encodedInstance.amount1 = ProtobufLib.encode_uint64(instance.amount1);
+        }
+
+        // Omit encoding amount2 if default value
+        if (uint64(instance.amount2) != 0) {
+            // Encode key for amount2
+            encodedInstance.amount2__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount2
+            encodedInstance.amount2 = ProtobufLib.encode_uint64(instance.amount2);
+        }
+
+        bytes memory finalEncoded;
+        index = 0;
+        len = 0;
+        len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2.length);
+        finalEncoded = new bytes(len);
+
+        uint64 j;
+        j = 0;
+        while (j < encodedInstance.amount1.length) {
+            finalEncoded[index++] = encodedInstance.amount1[j];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2.length) {
+            finalEncoded[index++] = encodedInstance.amount2[j];
+        }
+
+        return finalEncoded;
+    }
+
+    // Encode a nested WithdrawFundsPayload, wrapped in key and length if non-default
+    function encodeNested(uint64 field_number, WithdrawFundsPayload memory instance) internal pure returns (WithdrawFundsPayload__Encoded__Nested memory) {
+        WithdrawFundsPayload__Encoded__Nested memory wrapped;
+
+        wrapped.nestedInstance = encode(instance);
+
+        uint64 len = uint64(wrapped.nestedInstance.length);
+        if (len > 0) {
+            wrapped.key = ProtobufLib.encode_key(field_number, 2);
+            wrapped.length = ProtobufLib.encode_uint64(len);
+        }
+
+        return wrapped;
     }
 
 }
