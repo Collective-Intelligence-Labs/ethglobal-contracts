@@ -1,0 +1,70 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212207f95f2196e4322c40244de3663a83a0d62317fc1550c14bffa7b07adf4164b4764736f6c63430008120033",
+			"opcodes": "PUSH1 0x56 PUSH1 0x37 PUSH1 0xB DUP3 DUP3 DUP3 CODECOPY DUP1 MLOAD PUSH1 0x0 BYTE PUSH1 0x73 EQ PUSH1 0x2A JUMPI PUSH4 0x4E487B71 PUSH1 0xE0 SHL PUSH1 0x0 MSTORE PUSH1 0x0 PUSH1 0x4 MSTORE PUSH1 0x24 PUSH1 0x0 REVERT JUMPDEST ADDRESS PUSH1 0x0 MSTORE PUSH1 0x73 DUP2 MSTORE8 DUP3 DUP2 RETURN INVALID PUSH20 0x0 ADDRESS EQ PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 PUSH32 0x95F2196E4322C40244DE3663A83A0D62317FC1550C14BFFA7B07ADF4164B4764 PUSH20 0x6F6C634300081200330000000000000000000000 ",
+			"sourceMap": "394:9539:1:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;394:9539:1;;;;;;;;;;;;;;;;;"
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212207f95f2196e4322c40244de3663a83a0d62317fc1550c14bffa7b07adf4164b4764736f6c63430008120033",
+			"opcodes": "PUSH20 0x0 ADDRESS EQ PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 PUSH32 0x95F2196E4322C40244DE3663A83A0D62317FC1550C14BFFA7B07ADF4164B4764 PUSH20 0x6F6C634300081200330000000000000000000000 ",
+			"sourceMap": "394:9539:1:-:0;;;;;;;;"
+		},
+		"gasEstimates": {
+			"creation": {
+				"codeDepositCost": "17200",
+				"executionCost": "103",
+				"totalCost": "17303"
+			},
+			"internal": {
+				"check_key(uint64,enum ProtobufLib.WireType)": "infinite",
+				"decode(uint64,bytes memory,uint64)": "infinite",
+				"decode_1(uint64,bytes memory,struct DomainEvent memory)": "infinite",
+				"decode_2(uint64,bytes memory,struct DomainEvent memory)": "infinite",
+				"decode_3(uint64,bytes memory,struct DomainEvent memory)": "infinite",
+				"decode_field(uint64,bytes memory,uint64,uint64,struct DomainEvent memory)": "infinite",
+				"encode(struct DomainEvent memory)": "infinite",
+				"encodeNested(uint64,struct DomainEvent memory)": "infinite"
+			}
+		},
+		"methodIdentifiers": {}
+	},
+	"abi": []
+}
