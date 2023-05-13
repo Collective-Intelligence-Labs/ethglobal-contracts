@@ -11,16 +11,20 @@ import "./proto/event.proto.sol";
 
 contract AMMState is AggregateState, Utils {
 
+    using SafeMath for uint256;
+
     uint256 constant PRECISION = 1_000_000;
 
     bytes public token1;
     bytes public token2;
-    uint256 token1Supply;
-    uint256 token2Supply;
+    uint256 totalToken1;
+    uint256 totalToken2;
 
-    mapping (address => uint) public shares;
+    uint256 K;
+
+    mapping (address => uint256) public shares;
     address[] shareholders;
-    uint totalShares;
+    uint256 totalShares;
 
     mapping (address => uint256) public balance1;
     mapping (address => uint256) public balance2;
@@ -50,14 +54,38 @@ contract AMMState is AggregateState, Utils {
 
             onFundsWithdrawn(payload);
         }
+
+        if (evnt.evnt_type == DomainEventType.LIQUIDITY_ADDED) {
+            (bool success, , LiquidityAddedPayload memory payload) = LiquidityAddedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
+            require(success, "LiquidityAddedPayload deserialization failed");
+
+            onLiquidityAdded(payload);
+        }
+
+        if (evnt.evnt_type == DomainEventType.LIQUIDITY_REMOVED) {
+            (bool success, , LiquidityRemovedPayload memory payload) = LiquidityRemovedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
+            require(success, "LiquidityRemovedPayload deserialization failed");
+
+            onLiquidityRemoved(payload);
+        }
+    }
+
+    function getTokensEstimateForShare(uint256 _share) public view returns(uint256 amountToken1, uint256 amountToken2) {
+        require(totalShares > 0, "No liquidity in pool");
+        require(_share <= totalShares, "Share should be less than totalShare");
+        
+        amountToken1 = _share.mul(totalToken1).div(totalShares);
+        amountToken2 = _share.mul(totalToken2).div(totalShares);
     }
 
     function onCreated(AMMCreatedPayload memory payload) private {
         token1 = payload.asset1;
-        token1Supply = payload.supply1;
+        totalToken1 = 0;
 
         token2 = payload.asset2;
-        token1Supply = payload.supply2;
+        totalToken2 = 0;
+
+        K = totalToken1.mul(totalToken2);
 
         totalShares = 0 * PRECISION;
 
@@ -97,6 +125,48 @@ contract AMMState is AggregateState, Utils {
         }
     }
 
+    function onLiquidityAdded(LiquidityAddedPayload memory payload) private {
+        address account = bytesToAddress(payload.account);
+        uint256 share = 0;
+
+        if(totalShares == 0) { // Genesis liquidity is issued 100 Shares
+            share = 100 * PRECISION;
+        } else{
+            uint256 share1 = totalShares.mul(payload.amount1).div(totalToken1);
+            uint256 share2 = totalShares.mul(payload.amount2).div(totalToken2);
+            require(share1 == share2, "Equivalent value of tokens not provided...");
+            share = share1;
+        }
+
+        require(share > 0, "Asset value less than threshold for contribution!");
+        balance1[account] -= payload.amount1;
+        balance2[account] -= payload.amount2;
+
+        totalToken1 += payload.amount1;
+        totalToken2 += payload.amount2;
+        K = totalToken1.mul(totalToken2);
+
+        totalShares += share;
+        shares[account] += share;
+    }
+
+    function onLiquidityRemoved(LiquidityRemovedPayload memory payload) private {
+        address account = bytesToAddress(payload.account);
+        uint256 _share = payload.shares;
+        
+        (uint256 amountToken1, uint256 amountToken2) = getTokensEstimateForShare(_share);
+        
+        shares[msg.sender] -= _share;
+        totalShares -= _share;
+
+        totalToken1 -= amountToken1;
+        totalToken2 -= amountToken2;
+        K = totalToken1.mul(totalToken2);
+
+        balance1[account] += amountToken1;
+        balance2[account] += amountToken2;
+    }
+
     function clear() internal override { 
         for (uint i = 0; i < shareholders.length; i++) {
             delete shares[shareholders[i]];
@@ -115,8 +185,8 @@ contract AMMState is AggregateState, Utils {
         token1 = '';
         token2 = '';
 
-        token1Supply = 0;
-        token2Supply = 0;
+        totalToken1 = 0;
+        totalToken2 = 0;
     }
 
 }

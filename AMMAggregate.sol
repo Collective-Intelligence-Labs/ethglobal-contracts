@@ -2,6 +2,7 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./Aggregate.sol";
 import "./AMMState.sol";
 import "./Utils.sol";
@@ -37,6 +38,20 @@ contract AMMAggregate is Aggregate, Utils {
             require(success, "WithdrawFundsPayload deserialization failed");
 
             withdraw(payload);
+        }
+
+        if (cmd.cmd_type == CommandType.ADD_LIQUIDITY) {
+            (bool success, , AddLiquidityPayload memory payload) = AddLiquidityPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
+            require(success, "AddLiquidityPayload deserialization failed");
+
+            addLiquidity(payload);
+        }
+
+        if (cmd.cmd_type == CommandType.REMOVE_LIQUIDITY) {
+            (bool success, , RemoveLiquidityPayload memory payload) = RemoveLiquidityPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
+            require(success, "RemoveLiquidityPayload deserialization failed");
+
+            removeLiquidity(payload);
         }
     }
 
@@ -103,6 +118,49 @@ contract AMMAggregate is Aggregate, Utils {
         evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
         evnt.evnt_type = DomainEventType.FUNDS_WITHDRAWN;
         evnt.evnt_payload = FundsWithdrawnPayloadCodec.encode(evnt_payload);
+
+        applyEvent(evnt);
+    }
+
+    function addLiquidity(AddLiquidityPayload memory payload) private {
+        AMMState s = AMMState(address(state));
+
+        require(s.isCreated() == true, "AMM does not exist");
+        
+        address account = bytesToAddress(payload.account);
+        require(s.balance1(account) >= payload.amount1, "Not enough balance to add liquidity");
+        require(s.balance2(account) >= payload.amount2, "Not enough balance to add liquidity");
+
+        LiquidityAddedPayload memory evnt_payload;
+        evnt_payload.account = payload.account;
+        evnt_payload.amount1 = payload.amount1;
+        evnt_payload.amount2 = payload.amount2;
+
+        DomainEvent memory evnt;
+        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
+        evnt.evnt_type = DomainEventType.LIQUIDITY_ADDED;
+        evnt.evnt_payload = LiquidityAddedPayloadCodec.encode(evnt_payload);
+
+        applyEvent(evnt);
+    }
+
+    function removeLiquidity(RemoveLiquidityPayload memory payload) private {
+        AMMState s = AMMState(address(state));
+
+        require(s.isCreated() == true, "AMM does not exist");
+        
+        address account = bytesToAddress(payload.account);
+        require(s.shares(account) >= payload.share, "Not enough share to remove liquidity");
+
+        // Calculate amounts when altering state
+        LiquidityRemovedPayload memory evnt_payload;
+        evnt_payload.account = payload.account;
+        evnt_payload.shares = payload.share;
+
+        DomainEvent memory evnt;
+        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
+        evnt.evnt_type = DomainEventType.LIQUIDITY_REMOVED;
+        evnt.evnt_payload = LiquidityRemovedPayloadCodec.encode(evnt_payload);
 
         applyEvent(evnt);
     }

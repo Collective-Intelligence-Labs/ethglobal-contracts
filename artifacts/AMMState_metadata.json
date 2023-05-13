@@ -25,6 +25,68 @@
 				"type": "event"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "balance1",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "balance2",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_share",
+						"type": "uint256"
+					}
+				],
+				"name": "getTokensEstimateForShare",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountToken1",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountToken2",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "isCreated",
 				"outputs": [
@@ -223,11 +285,11 @@
 			]
 		},
 		"AMMState.sol": {
-			"keccak256": "0xa2c21da4ac70d275893425129faa4cfcdb73469a8f19f6e55943e5c702f0bc76",
+			"keccak256": "0xbd9101ec24fbf7901ff66ee1572434fd18f1fbcd9ed6d01c0ea14ee83ff26348",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://4cbada75beabe9f15b2ab131834aa0bc0cf2623bb6d82a629bd8a54afd3f69bf",
-				"dweb:/ipfs/QmY7SADphLdePq5WB6nByS5zdB41753vCWWkXWyVeSP644"
+				"bzz-raw://0aacd4b86d094eaa634f402e5f343d2c3437e0a92680dc334818ddd5da070765",
+				"dweb:/ipfs/QmPQJ1mrpHjKPWqJS7LzsQEKfU8aA1RgdQCTmSsA3NDJa5"
 			]
 		},
 		"AggregateState.sol": {
