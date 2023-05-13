@@ -33,8 +33,8 @@ message CreateAMMPayload {
   bytes token1 = 1;
   bytes token2 = 2;
 
-  int32 token1_balance = 3;
-  int32 token2_balance = 4;
+  uint64 token1_balance = 3;
+  uint64 token2_balance = 4;
 }
 
 message AddLiquidityPayload {

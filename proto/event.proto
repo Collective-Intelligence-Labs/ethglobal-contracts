@@ -30,42 +30,42 @@ message NFTTransferedPayload {
 }
 
 message AMMCreatedPayload {
-  string asset1 = 1;
-  string asset2 = 2;
+  bytes asset1 = 1;
+  bytes asset2 = 2;
   uint64 supply1 = 3;
   uint64 supply2 = 4;
-  string owner = 5;
+  bytes owner = 5;
 }
 
 message LiquidityAddedPayload {
   uint64 amount1 = 1;
   uint64 amount2 = 2;
-  string account = 3;
+  bytes account = 3;
 }
 
 message LiquidityRemovedPayload {
   uint64 shares = 1;
   uint64 amount1 = 2;
   uint64 amount2 = 3;
-  string account = 4;
+  bytes account = 4;
 }
 
 message TokensSwapedPayload {
   int64 amount_from = 1;
-  string asset_from = 2;
+  bytes asset_from = 2;
   int64 amount_to = 3;
-  string asset_to = 4;
-  string account = 5;
+  bytes asset_to = 4;
+  bytes account = 5;
 }
 
 message FundsWithdrawnPayload {
-  string asset = 1;
+  bytes asset = 1;
   uint64 amount = 2;
-  string account =3;
+  bytes account =3;
 }
 
 message FundsDepositedPayload {
-  string asset = 1;
+  bytes asset = 1;
   uint64 amount = 2;
-  string account = 3;
+  bytes account = 3;
 }
