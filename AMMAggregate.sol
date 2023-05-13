@@ -24,12 +24,26 @@ contract AMMAggregate is Aggregate, Utils {
 
             create(payload);
         }
+
+        if (cmd.cmd_type == CommandType.DEPOSIT_FUNDS) {
+            (bool success, , DepositFundsPayload memory payload) = DepositFundsPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
+            require(success, "DepositFundsPayload deserialization failed");
+
+            deposit(payload);
+        }
+
+        if (cmd.cmd_type == CommandType.WITHDRAW_FUNDS) {
+            (bool success, , WithdrawFundsPayload memory payload) = WithdrawFundsPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
+            require(success, "WithdrawFundsPayload deserialization failed");
+
+            withdraw(payload);
+        }
     }
 
     function create(CreateAMMPayload memory payload) private {
         AMMState s = AMMState(address(state));
 
-        require(s.token1() == address(0) && s.token2() == address(0), "AMM already exists");
+        require(s.isCreated() == false, "AMM already exists");
 
         AMMCreatedPayload memory evnt_payload;
         evnt_payload.asset1 = payload.token1;
@@ -41,6 +55,54 @@ contract AMMAggregate is Aggregate, Utils {
         evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
         evnt.evnt_type = DomainEventType.AMM_CREATED;
         evnt.evnt_payload = AMMCreatedPayloadCodec.encode(evnt_payload);
+
+        applyEvent(evnt);
+    }
+
+    function deposit(DepositFundsPayload memory payload) private {
+        AMMState s = AMMState(address(state));
+
+        require(s.isCreated() == true, "AMM does not exist");
+        require(compareStrings(s.token1(), payload.token) || compareStrings(s.token2(), payload.token), "Please deposit supported tokens");
+        require(payload.amount > 0, "Not enough funds to deposit");
+
+        FundsDepositedPayload memory evnt_payload;
+        evnt_payload.account = payload.account;
+        evnt_payload.amount = payload.amount;
+        evnt_payload.asset = payload.token;
+
+        DomainEvent memory evnt;
+        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
+        evnt.evnt_type = DomainEventType.FUNDS_DEPOSITED;
+        evnt.evnt_payload = FundsDepositedPayloadCodec.encode(evnt_payload);
+
+        applyEvent(evnt);
+    }
+
+    function withdraw(WithdrawFundsPayload memory payload) private {
+        AMMState s = AMMState(address(state));
+
+        require(s.isCreated() == true, "AMM does not exist");
+        require(compareStrings(s.token1(), payload.token) || compareStrings(s.token2(), payload.token), "Please deposit supported tokens");
+        
+        address account = bytesToAddress(payload.account);
+        if (compareStrings(s.token1(), payload.token)) {
+            require(s.balance1(account) > payload.amount, "Not enough funds to withdraw");
+        }
+
+        if (compareStrings(s.token2(), payload.token)) {
+            require(s.balance2(account) > payload.amount, "Not enough funds to withdraw");
+        }
+
+        FundsWithdrawnPayload memory evnt_payload;
+        evnt_payload.account = payload.account;
+        evnt_payload.amount = payload.amount;
+        evnt_payload.asset = payload.token;
+
+        DomainEvent memory evnt;
+        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
+        evnt.evnt_type = DomainEventType.FUNDS_WITHDRAWN;
+        evnt.evnt_payload = FundsWithdrawnPayloadCodec.encode(evnt_payload);
 
         applyEvent(evnt);
     }

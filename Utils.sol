@@ -12,5 +12,9 @@ abstract contract Utils {
         }
         return addr;
     }
+
+    function compareStrings(bytes memory s1, bytes memory s2) internal pure returns (bool) {
+        return (keccak256(abi.encodePacked((s1))) == keccak256(abi.encodePacked((s2))));
+    }
     
 }

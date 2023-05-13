@@ -6,6 +6,17 @@
 	"output": {
 		"abi": [
 			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "id_",
+						"type": "string"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -25,13 +36,97 @@
 				"type": "event"
 			},
 			{
-				"inputs": [],
-				"name": "isCreated",
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "i",
+						"type": "uint256"
+					}
+				],
+				"name": "getChange",
 				"outputs": [
 					{
-						"internalType": "bool",
+						"components": [
+							{
+								"internalType": "uint64",
+								"name": "evnt_idx",
+								"type": "uint64"
+							},
+							{
+								"internalType": "enum DomainEventType",
+								"name": "evnt_type",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes",
+								"name": "evnt_payload",
+								"type": "bytes"
+							}
+						],
+						"internalType": "struct DomainEvent",
 						"name": "",
-						"type": "bool"
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getChangesLength",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes",
+								"name": "aggregate_id",
+								"type": "bytes"
+							},
+							{
+								"internalType": "bytes",
+								"name": "cmd_signature",
+								"type": "bytes"
+							},
+							{
+								"internalType": "enum CommandType",
+								"name": "cmd_type",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes",
+								"name": "cmd_payload",
+								"type": "bytes"
+							}
+						],
+						"internalType": "struct Command",
+						"name": "cmd",
+						"type": "tuple"
+					}
+				],
+				"name": "handle",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "id",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -67,25 +162,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "shares",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"components": [
 							{
 								"internalType": "uint64",
@@ -103,37 +179,24 @@
 								"type": "bytes"
 							}
 						],
-						"internalType": "struct DomainEvent",
-						"name": "evnt",
-						"type": "tuple"
+						"internalType": "struct DomainEvent[]",
+						"name": "evnts",
+						"type": "tuple[]"
 					}
 				],
-				"name": "spool",
+				"name": "setup",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
 				"inputs": [],
-				"name": "token1",
+				"name": "state",
 				"outputs": [
 					{
-						"internalType": "bytes",
+						"internalType": "contract AggregateState",
 						"name": "",
-						"type": "bytes"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "token2",
-				"outputs": [
-					{
-						"internalType": "bytes",
-						"name": "",
-						"type": "bytes"
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -176,7 +239,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"AMMState.sol": "AMMState"
+			"AMMAggregate.sol": "AMMAggregate"
 		},
 		"evmVersion": "berlin",
 		"libraries": {},
@@ -222,12 +285,28 @@
 				"dweb:/ipfs/QmQJquTMtc6fgm5JQzGdsGpA2fqBe3MHWEdt2qzaLySMdN"
 			]
 		},
-		"AMMState.sol": {
-			"keccak256": "0xa2c21da4ac70d275893425129faa4cfcdb73469a8f19f6e55943e5c702f0bc76",
+		"AMMAggregate.sol": {
+			"keccak256": "0x0e31f9825e45c646b9b317c1fae683cbd3efdb94200975620257cd66e2720d14",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://4cbada75beabe9f15b2ab131834aa0bc0cf2623bb6d82a629bd8a54afd3f69bf",
-				"dweb:/ipfs/QmY7SADphLdePq5WB6nByS5zdB41753vCWWkXWyVeSP644"
+				"bzz-raw://2ca2b0d876ca3c2a6f5bea64dea68b56575fc27515124b972841678211f0ff27",
+				"dweb:/ipfs/QmSiLtc9eynr7FQfqgEyrsWZuRujhq8UzdDV6CjwzDRzVd"
+			]
+		},
+		"AMMState.sol": {
+			"keccak256": "0x32865efa15a79d8609092756440f599e0e1fff820327cc812b5673f19436ffa1",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://14cb6d775d85ed42597c01d3b03821e20e27da9bd58b338278e4e5ea836fd677",
+				"dweb:/ipfs/QmdfDpHLwwzhUJupinEytF3DmUrtPTpcu8rxDhs4PkToPE"
+			]
+		},
+		"Aggregate.sol": {
+			"keccak256": "0x56b832fd24cbba960d2fe2a8bee0daa249824d40aae1eb033d0841bee38a7841",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://a26775e03a4acb0ee0c5ea8c91969eaa7d84ff86310c1d6dcc990b3ab1c47d3e",
+				"dweb:/ipfs/QmbrbYMeX4B6nxEG584rBWjgcMXfrPwfQZQzUPNzuTnvMx"
 			]
 		},
 		"AggregateState.sol": {
