@@ -49,8 +49,8 @@ message RemoveLiquidityPayload {
 }
 
 message SwapTokensPayload {
-  uint64 amount1 = 1;
-  uint64 amount2 = 2;
+  uint64 amount = 1;
+  bytes token = 2;
   bytes account = 3;
 }
 

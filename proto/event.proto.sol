@@ -1925,9 +1925,9 @@ library LiquidityRemovedPayloadCodec {
 }
 
 struct TokensSwapedPayload {
-    int64 amount_from;
+    uint64 amount_from;
     bytes asset_from;
-    int64 amount_to;
+    uint64 amount_to;
     bytes asset_to;
     bytes account;
 }
@@ -2073,8 +2073,8 @@ library TokensSwapedPayloadCodec {
     function decode_1(uint64 pos, bytes memory buf, TokensSwapedPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
-        int64 v;
-        (success, pos, v) = ProtobufLib.decode_int64(pos, buf);
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
         if (!success) {
             return (false, pos);
         }
@@ -2118,8 +2118,8 @@ library TokensSwapedPayloadCodec {
     function decode_3(uint64 pos, bytes memory buf, TokensSwapedPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
-        int64 v;
-        (success, pos, v) = ProtobufLib.decode_int64(pos, buf);
+        uint64 v;
+        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
         if (!success) {
             return (false, pos);
         }
@@ -2218,7 +2218,7 @@ library TokensSwapedPayloadCodec {
             // Encode key for amount_from
             encodedInstance.amount_from__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
             // Encode amount_from
-            encodedInstance.amount_from = ProtobufLib.encode_int64(instance.amount_from);
+            encodedInstance.amount_from = ProtobufLib.encode_uint64(instance.amount_from);
         }
 
         // Omit encoding asset_from if default value
@@ -2235,7 +2235,7 @@ library TokensSwapedPayloadCodec {
             // Encode key for amount_to
             encodedInstance.amount_to__Key = ProtobufLib.encode_key(3, uint64(ProtobufLib.WireType.Varint));
             // Encode amount_to
-            encodedInstance.amount_to = ProtobufLib.encode_int64(instance.amount_to);
+            encodedInstance.amount_to = ProtobufLib.encode_uint64(instance.amount_to);
         }
 
         // Omit encoding asset_to if default value

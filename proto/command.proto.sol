@@ -1827,8 +1827,8 @@ library RemoveLiquidityPayloadCodec {
 }
 
 struct SwapTokensPayload {
-    uint64 amount1;
-    uint64 amount2;
+    uint64 amount;
+    bytes token;
     bytes account;
 }
 
@@ -1895,7 +1895,7 @@ library SwapTokensPayloadCodec {
         }
 
         if (field_number == 2) {
-            return wire_type == ProtobufLib.WireType.Varint;
+            return wire_type == ProtobufLib.WireType.LengthDelimited;
         }
 
         if (field_number == 3) {
@@ -1941,7 +1941,7 @@ library SwapTokensPayloadCodec {
         return (false, pos);
     }
 
-    // SwapTokensPayload.amount1
+    // SwapTokensPayload.amount
     function decode_1(uint64 pos, bytes memory buf, SwapTokensPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
@@ -1956,27 +1956,32 @@ library SwapTokensPayloadCodec {
             return (false, pos);
         }
 
-        instance.amount1 = v;
+        instance.amount = v;
 
         return (true, pos);
     }
 
-    // SwapTokensPayload.amount2
+    // SwapTokensPayload.token
     function decode_2(uint64 pos, bytes memory buf, SwapTokensPayload memory instance) internal pure returns (bool, uint64) {
         bool success;
 
-        uint64 v;
-        (success, pos, v) = ProtobufLib.decode_uint64(pos, buf);
+        uint64 len;
+        (success, pos, len) = ProtobufLib.decode_bytes(pos, buf);
         if (!success) {
             return (false, pos);
         }
 
         // Default value must be omitted
-        if (v == 0) {
+        if (len == 0) {
             return (false, pos);
         }
 
-        instance.amount2 = v;
+        instance.token = new bytes(len);
+        for (uint64 i = 0; i < len; i++) {
+            instance.token[i] = buf[pos + i];
+        }
+
+        pos = pos + len;
 
         return (true, pos);
     }
@@ -2008,10 +2013,11 @@ library SwapTokensPayloadCodec {
 
     // Holds encoded version of message
     struct SwapTokensPayload__Encoded {
-        bytes amount1__Key;
-        bytes amount1;
-        bytes amount2__Key;
-        bytes amount2;
+        bytes amount__Key;
+        bytes amount;
+        bytes token__Key;
+        bytes token__Length;
+        bytes token;
         bytes account__Key;
         bytes account__Length;
         bytes account;
@@ -2029,20 +2035,21 @@ library SwapTokensPayloadCodec {
         uint64 len;
         uint64 index;
 
-        // Omit encoding amount1 if default value
-        if (uint64(instance.amount1) != 0) {
-            // Encode key for amount1
-            encodedInstance.amount1__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
-            // Encode amount1
-            encodedInstance.amount1 = ProtobufLib.encode_uint64(instance.amount1);
+        // Omit encoding amount if default value
+        if (uint64(instance.amount) != 0) {
+            // Encode key for amount
+            encodedInstance.amount__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
+            // Encode amount
+            encodedInstance.amount = ProtobufLib.encode_uint64(instance.amount);
         }
 
-        // Omit encoding amount2 if default value
-        if (uint64(instance.amount2) != 0) {
-            // Encode key for amount2
-            encodedInstance.amount2__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint));
-            // Encode amount2
-            encodedInstance.amount2 = ProtobufLib.encode_uint64(instance.amount2);
+        // Omit encoding token if default value
+        if (bytes(instance.token).length > 0) {
+            // Encode key for token
+            encodedInstance.token__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited));
+            // Encode token
+            encodedInstance.token__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.token).length));
+            encodedInstance.token = bytes(instance.token);
         }
 
         // Omit encoding account if default value
@@ -2057,10 +2064,11 @@ library SwapTokensPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
-        len += uint64(encodedInstance.amount1__Key.length);
-        len += uint64(encodedInstance.amount1.length);
-        len += uint64(encodedInstance.amount2__Key.length);
-        len += uint64(encodedInstance.amount2.length);
+        len += uint64(encodedInstance.amount__Key.length);
+        len += uint64(encodedInstance.amount.length);
+        len += uint64(encodedInstance.token__Key.length);
+        len += uint64(encodedInstance.token__Length.length);
+        len += uint64(encodedInstance.token.length);
         len += uint64(encodedInstance.account__Key.length);
         len += uint64(encodedInstance.account__Length.length);
         len += uint64(encodedInstance.account.length);
@@ -2068,20 +2076,24 @@ library SwapTokensPayloadCodec {
 
         uint64 j;
         j = 0;
-        while (j < encodedInstance.amount1__Key.length) {
-            finalEncoded[index++] = encodedInstance.amount1__Key[j++];
+        while (j < encodedInstance.amount__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount__Key[j++];
         }
         j = 0;
-        while (j < encodedInstance.amount1.length) {
-            finalEncoded[index++] = encodedInstance.amount1[j++];
+        while (j < encodedInstance.amount.length) {
+            finalEncoded[index++] = encodedInstance.amount[j++];
         }
         j = 0;
-        while (j < encodedInstance.amount2__Key.length) {
-            finalEncoded[index++] = encodedInstance.amount2__Key[j++];
+        while (j < encodedInstance.token__Key.length) {
+            finalEncoded[index++] = encodedInstance.token__Key[j++];
         }
         j = 0;
-        while (j < encodedInstance.amount2.length) {
-            finalEncoded[index++] = encodedInstance.amount2[j++];
+        while (j < encodedInstance.token__Length.length) {
+            finalEncoded[index++] = encodedInstance.token__Length[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.token.length) {
+            finalEncoded[index++] = encodedInstance.token[j++];
         }
         j = 0;
         while (j < encodedInstance.account__Key.length) {

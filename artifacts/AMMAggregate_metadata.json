@@ -286,19 +286,19 @@
 			]
 		},
 		"AMMAggregate.sol": {
-			"keccak256": "0x86eeb8a4544b44af7867d6603a2fd19e74b4ef6a01f38dcc9963f78a68ae9998",
+			"keccak256": "0x41a3b465e207063e3d000cc6ecfd96f049d75d6ea319d38b1b1dcb99513ac2d4",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://51bc87f6894de99b392ce28956f94a03851295559437ca487202172d360572b4",
-				"dweb:/ipfs/QmaYNWUBFzhz7uvGycxrfEbQKibnTF1unLpH2aNxPDKZQm"
+				"bzz-raw://a32b30e7fb04339eec4fa92297f90ba62aa979bb6bf2068797426442774348c3",
+				"dweb:/ipfs/QmTkhiVVm6fn9hUAj1cZQbMStBu4uu2Yt5RaFRRy5Z9KwU"
 			]
 		},
 		"AMMState.sol": {
-			"keccak256": "0xbd9101ec24fbf7901ff66ee1572434fd18f1fbcd9ed6d01c0ea14ee83ff26348",
+			"keccak256": "0xcef5cd44041984830f885ae2492347f282c21b187c5cb45984d81e3bedd25465",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://0aacd4b86d094eaa634f402e5f343d2c3437e0a92680dc334818ddd5da070765",
-				"dweb:/ipfs/QmPQJ1mrpHjKPWqJS7LzsQEKfU8aA1RgdQCTmSsA3NDJa5"
+				"bzz-raw://3a7814012a63e32681654eb3da9d3829ed7dc07f68fd0a707135b2b41ebb055a",
+				"dweb:/ipfs/QmVhNLqYXsxW6snpgk2NXLwysE6fZt1D3hzwMaZYDAyREY"
 			]
 		},
 		"Aggregate.sol": {
@@ -326,19 +326,19 @@
 			]
 		},
 		"proto/command.proto.sol": {
-			"keccak256": "0x27efc4f506b48d11ccb7c9019c93f904c36c3fc4d56acd7fcf74ce972cd45c6f",
+			"keccak256": "0x8feac20b48ec0aef848ac472610d55a5d4a959abc7ae85215fe536c245e63a35",
 			"license": "CC0",
 			"urls": [
-				"bzz-raw://6addaf453e2d5d9b371ffc6d6766d9dca6e4e4bfb6a3bc7db85c75b653f565eb",
-				"dweb:/ipfs/QmV9keHuyqztRb2qv8AAx4Bm3VLSrjiE4LLGCwsYZHSw6x"
+				"bzz-raw://3bab274e62cc20c720a32d898cc45613077099e9d0898ffff49e56a4e63b1716",
+				"dweb:/ipfs/QmPa6T3iC9NERzFzzWY3yAv6USq568WS3ep4kLrmtJ135v"
 			]
 		},
 		"proto/event.proto.sol": {
-			"keccak256": "0x9559af87a8d5fcb312835970dfb7d162d996dd9e1e0aba7da5665e79d89ce351",
+			"keccak256": "0xa665c70a99f7d38ca0a026c56dd288f7aa7cdf921e55b3bb9a51b298ed11a33c",
 			"license": "CC0",
 			"urls": [
-				"bzz-raw://6a4f4866597220c465221968267f6dcee0a17d9b77f09672a5221852d27a0802",
-				"dweb:/ipfs/Qmeh4J2Y8tt3WwMji2cEVrMYRSz18Rs3wG4S7UGQ4QoLhV"
+				"bzz-raw://3b94727eadd0db4bf4c623dd49b68f6860045fcda1a9d6721f82c4498175255e",
+				"dweb:/ipfs/QmXMVXv2CQfC28xfgPQr3eEjWUqSL9NNypfAi31sfTag4V"
 			]
 		}
 	},

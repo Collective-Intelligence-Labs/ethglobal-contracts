@@ -53,6 +53,13 @@ contract AMMAggregate is Aggregate, Utils {
 
             removeLiquidity(payload);
         }
+
+        if (cmd.cmd_type == CommandType.SWAP) {
+            (bool success, , SwapTokensPayload memory payload) = SwapTokensPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
+            require(success, "SwapTokensPayload deserialization failed");
+
+            swap(payload);
+        }
     }
 
     function create(CreateAMMPayload memory payload) private {
@@ -161,6 +168,43 @@ contract AMMAggregate is Aggregate, Utils {
         evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
         evnt.evnt_type = DomainEventType.LIQUIDITY_REMOVED;
         evnt.evnt_payload = LiquidityRemovedPayloadCodec.encode(evnt_payload);
+
+        applyEvent(evnt);
+    }
+
+    function swap(SwapTokensPayload memory payload) private {
+        AMMState s = AMMState(address(state));
+
+        address account = bytesToAddress(payload.account);
+        
+        uint toSwapped = 0;
+        bytes memory toToken;
+
+        require(s.isCreated() == true, "AMM does not exist");
+        if (compareStrings(s.token1(), payload.token)) {
+            require(s.balance1(account) >= payload.amount, "Not enough token1 to swap");
+
+            toSwapped = s.getSwapToken1Estimate(payload.amount);
+            toToken = s.token2();
+        }
+        if (compareStrings(s.token2(), payload.token)) {
+            require(s.balance2(account) >= payload.amount, "Not enough token2 to swap");
+        
+            toSwapped = s.getSwapToken2Estimate(payload.amount);
+            toToken = s.token1();
+        }
+        
+        TokensSwapedPayload memory evnt_payload;
+        evnt_payload.account = payload.account;
+        evnt_payload.amount_from = payload.amount;
+        evnt_payload.asset_from = payload.token;
+        evnt_payload.amount_to = uint64(toSwapped);
+        evnt_payload.asset_to = toToken;
+
+        DomainEvent memory evnt;
+        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
+        evnt.evnt_type = DomainEventType.TOKENS_SWAPPED;
+        evnt.evnt_payload = TokensSwapedPayloadCodec.encode(evnt_payload);
 
         applyEvent(evnt);
     }

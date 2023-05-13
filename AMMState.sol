@@ -11,23 +11,23 @@ import "./proto/event.proto.sol";
 
 contract AMMState is AggregateState, Utils {
 
-    using SafeMath for uint256;
+    using SafeMath for uint;
 
-    uint256 constant PRECISION = 1_000_000;
+    uint64 constant PRECISION = 1_000_000;
 
     bytes public token1;
     bytes public token2;
-    uint256 totalToken1;
-    uint256 totalToken2;
+    uint totalToken1;
+    uint totalToken2;
 
-    uint256 K;
+    uint K;
 
-    mapping (address => uint256) public shares;
+    mapping (address => uint) public shares;
     address[] shareholders;
-    uint256 totalShares;
+    uint totalShares;
 
-    mapping (address => uint256) public balance1;
-    mapping (address => uint256) public balance2;
+    mapping (address => uint) public balance1;
+    mapping (address => uint) public balance2;
     address[] balanceOwners;
 
     bool public isCreated = false;
@@ -68,14 +68,39 @@ contract AMMState is AggregateState, Utils {
 
             onLiquidityRemoved(payload);
         }
+
+        if (evnt.evnt_type == DomainEventType.TOKENS_SWAPPED) {
+            (bool success, , TokensSwapedPayload memory payload) = TokensSwapedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
+            require(success, "TokensSwapedPayload deserialization failed");
+
+            onTokensSwapped(payload);
+        }
     }
 
-    function getTokensEstimateForShare(uint256 _share) public view returns(uint256 amountToken1, uint256 amountToken2) {
+    function getTokensEstimateForShare(uint _share) public view returns(uint amountToken1, uint amountToken2) {
         require(totalShares > 0, "No liquidity in pool");
         require(_share <= totalShares, "Share should be less than totalShare");
         
         amountToken1 = _share.mul(totalToken1).div(totalShares);
         amountToken2 = _share.mul(totalToken2).div(totalShares);
+    }
+
+    function getSwapToken1Estimate(uint _amountToken1) public view returns(uint amountToken2) {
+        uint token1After = totalToken1.add(_amountToken1);
+        uint token2After = K.div(token1After);
+        amountToken2 = totalToken2.sub(token2After);
+
+        // To ensure that Token2's pool is not completely depleted leading to inf:0 ratio
+        if(amountToken2 == totalToken2) amountToken2--;
+    }
+
+    function getSwapToken2Estimate(uint _amountToken2) public view returns(uint amountToken1) {
+        uint token2After = totalToken2.add(_amountToken2);
+        uint token1After = K.div(token2After);
+        amountToken1 = totalToken1.sub(token1After);
+
+        // To ensure that Token1's pool is not completely depleted leading to inf:0 ratio
+        if(amountToken1 == totalToken1) amountToken1--;
     }
 
     function onCreated(AMMCreatedPayload memory payload) private {
@@ -127,13 +152,13 @@ contract AMMState is AggregateState, Utils {
 
     function onLiquidityAdded(LiquidityAddedPayload memory payload) private {
         address account = bytesToAddress(payload.account);
-        uint256 share = 0;
+        uint share = 0;
 
         if(totalShares == 0) { // Genesis liquidity is issued 100 Shares
             share = 100 * PRECISION;
         } else{
-            uint256 share1 = totalShares.mul(payload.amount1).div(totalToken1);
-            uint256 share2 = totalShares.mul(payload.amount2).div(totalToken2);
+            uint share1 = totalShares.mul(payload.amount1).div(totalToken1);
+            uint share2 = totalShares.mul(payload.amount2).div(totalToken2);
             require(share1 == share2, "Equivalent value of tokens not provided...");
             share = share1;
         }
@@ -152,9 +177,9 @@ contract AMMState is AggregateState, Utils {
 
     function onLiquidityRemoved(LiquidityRemovedPayload memory payload) private {
         address account = bytesToAddress(payload.account);
-        uint256 _share = payload.shares;
+        uint _share = payload.shares;
         
-        (uint256 amountToken1, uint256 amountToken2) = getTokensEstimateForShare(_share);
+        (uint amountToken1, uint amountToken2) = getTokensEstimateForShare(_share);
         
         shares[msg.sender] -= _share;
         totalShares -= _share;
@@ -165,6 +190,26 @@ contract AMMState is AggregateState, Utils {
 
         balance1[account] += amountToken1;
         balance2[account] += amountToken2;
+    }
+
+    function onTokensSwapped(TokensSwapedPayload memory payload) private {
+        
+        address account = bytesToAddress(payload.account);
+        
+        // Swap from token1 to token2
+        if (compareStrings(token1, payload.asset_from)) {
+            balance1[account] -= payload.amount_from;
+            totalToken1 += payload.amount_from;
+            totalToken2 -= payload.amount_to;
+            balance2[account] += payload.amount_to;
+        }
+        // Swap from token2 to token1
+        else {
+            balance2[account] -= payload.amount_from;
+            totalToken2 += payload.amount_from;
+            totalToken1 -= payload.amount_to;
+            balance1[account] += payload.amount_to;
+        }  
     }
 
     function clear() internal override { 

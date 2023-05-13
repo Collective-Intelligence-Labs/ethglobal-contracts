@@ -51,9 +51,9 @@ message LiquidityRemovedPayload {
 }
 
 message TokensSwapedPayload {
-  int64 amount_from = 1;
+  uint64 amount_from = 1;
   bytes asset_from = 2;
-  int64 amount_to = 3;
+  uint64 amount_to = 3;
   bytes asset_to = 4;
   bytes account = 5;
 }
