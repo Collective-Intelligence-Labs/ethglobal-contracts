@@ -9,7 +9,7 @@ import "./proto/command.proto.sol";
 import "./proto/event.proto.sol";
 
 
-contract NFTsAggregate is Aggregate, Utils {
+contract AMMAggregate is Aggregate, Utils {
 
     constructor(string memory id_) {
         id = id_;
@@ -28,9 +28,6 @@ contract NFTsAggregate is Aggregate, Utils {
 
     function create(CreateAMMPayload memory payload) private {
         AMMState s = AMMState(address(state));
-
-        address token1 = bytesToAddress(payload.token1);
-        address token2 = bytesToAddress(payload.token2);
 
         require(s.token1() == address(0) && s.token2() == address(0), "AMM already exists");
 

@@ -1,0 +1,354 @@
+{
+	"compiler": {
+		"version": "0.8.6+commit.11564f7e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "eventstore_",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					}
+				],
+				"name": "addAggregate",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "aggregates",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "dispatcher",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "eventStore",
+				"outputs": [
+					{
+						"internalType": "contract EventStore",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "aggregateId",
+						"type": "string"
+					}
+				],
+				"name": "get",
+				"outputs": [
+					{
+						"internalType": "contract Aggregate",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "contract Aggregate",
+						"name": "aggregate",
+						"type": "address"
+					}
+				],
+				"name": "save",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint64",
+								"name": "evnt_idx",
+								"type": "uint64"
+							},
+							{
+								"internalType": "enum DomainEventType",
+								"name": "evnt_type",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes",
+								"name": "evnt_payload",
+								"type": "bytes"
+							}
+						],
+						"internalType": "struct DomainEvent[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "dispatcher_",
+						"type": "address"
+					}
+				],
+				"name": "setDispatcher",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "eventStore_",
+						"type": "address"
+					}
+				],
+				"name": "setEventStore",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"AggregateRepository.sol": "AggregateRepository"
+		},
+		"evmVersion": "berlin",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@lazyledger/protobuf3-solidity-lib/contracts/ProtobufLib.sol": {
+			"keccak256": "0x576b0df487b0e9fd3ca3e08926642a4383f1d35eabe0125896b5d496c219957d",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://c11763350787bf4c094711078a6bb956a456b5704cde339f44136401e4d2c89e",
+				"dweb:/ipfs/QmR6JhjLEDVV8MQJpmfXh77XaBJN3SempyCz63233jcuJ2"
+			]
+		},
+		"@openzeppelin/contracts/access/Ownable.sol": {
+			"keccak256": "0xa94b34880e3c1b0b931662cb1c09e5dfa6662f31cba80e07c5ee71cd135c9673",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://40fb1b5102468f783961d0af743f91b9980cf66b50d1d12009f6bb1869cea4d2",
+				"dweb:/ipfs/QmYqEbJML4jB1GHbzD4cUZDtJg5wVwNm3vDJq1GbyDus8y"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
+				"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
+			]
+		},
+		"@openzeppelin/contracts/utils/math/SafeMath.sol": {
+			"keccak256": "0x0f633a0223d9a1dcccfcf38a64c9de0874dfcbfac0c6941ccf074d63a2ce0e1e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://864a40efcffdf408044c332a5aa38ec5618ed7b4eecb8f65faf45671bd6cdc65",
+				"dweb:/ipfs/QmQJquTMtc6fgm5JQzGdsGpA2fqBe3MHWEdt2qzaLySMdN"
+			]
+		},
+		"AMMAggregate.sol": {
+			"keccak256": "0x28648c4af1698feebfac07b3c7c7156d0c7456f510ff79b81798bd8d63d48afa",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://384b55b5955c14bb9daa0c6ae4d12f421c9e937d98e170a7e8f2a156bb8b5ca7",
+				"dweb:/ipfs/QmNZsrTe6VGmzkCmYyPw7ubkj8iD8HmtZq2HrQWZicgWTU"
+			]
+		},
+		"AMMState.sol": {
+			"keccak256": "0x1890ab2b2fda7388ccb5730f308246d19a0c5f0d7f39bd67381edbf72b7e308d",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://65d3a0845a2e7a5b41c12d0e98986ac233957821f69087bbac4359404e2613e1",
+				"dweb:/ipfs/QmYmricAZL37irSKdkViRxX3ZspE8wYM6gfsEZnuPgYjuR"
+			]
+		},
+		"Aggregate.sol": {
+			"keccak256": "0x56b832fd24cbba960d2fe2a8bee0daa249824d40aae1eb033d0841bee38a7841",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://a26775e03a4acb0ee0c5ea8c91969eaa7d84ff86310c1d6dcc990b3ab1c47d3e",
+				"dweb:/ipfs/QmbrbYMeX4B6nxEG584rBWjgcMXfrPwfQZQzUPNzuTnvMx"
+			]
+		},
+		"AggregateRepository.sol": {
+			"keccak256": "0xc8a8f3f2c52abc63b2321a619ebbb1c31f3a968948332297c6a798703c902800",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://adab1ff1aa0d6fd7fa8f0c21e339a2f79f4e83960ce48304eded168527af8052",
+				"dweb:/ipfs/QmShuwXPDpGPDCLPDpe8eG6XK6VJeBCk8Pg8KwDVRKhcxY"
+			]
+		},
+		"AggregateState.sol": {
+			"keccak256": "0xc4e03b8056ce1db98c9fef4f878f53a5fa6d0d2da15e0216cada1eff37bff178",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://bfec5beb0a085770ad18e9c804ba51a65e8740e45826aa4e22c31daddbe6b03f",
+				"dweb:/ipfs/QmQRGhzvAwLxHajY6PDFF8CEerHZiAfU5Ug1coTAamGNeo"
+			]
+		},
+		"EventStore.sol": {
+			"keccak256": "0x3e6ab449439fb67ca6b328317affcd553f60d46027c0e63ec1dd208d33955f9b",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://b9468dc80a7b171c7698e66ee1c89e9c25b6ec7c9d9de38fa321b2cefd2dfcd3",
+				"dweb:/ipfs/QmPqtRRTvsvQ1q5HXzwv2NEEykejotpQgofyem6JJ7wwYW"
+			]
+		},
+		"Utils.sol": {
+			"keccak256": "0xbf0405fcb86d0264e3ad691e65226f97b32c0e31c77c30c9054e3acf7be5faca",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://768fd94bf007e5910855f476fcbbe6a83742085861f78a852f037016d49c1fc3",
+				"dweb:/ipfs/QmTxee5iCA9WwwiWeejGgYawP8v4iyQLeTcQASFJJJ1Grh"
+			]
+		},
+		"proto/command.proto.sol": {
+			"keccak256": "0x818590d912d29fe03b06e44e416b5deea6df81db2aff13ee8ada7022fc3a0704",
+			"license": "CC0",
+			"urls": [
+				"bzz-raw://71928dbf3c3283ec0df14b86afc3c77f7c73b5ac2d9c277e4de6e9192a9df9f6",
+				"dweb:/ipfs/QmTfd5Gj3Qhrn2sGsnhc2HxeZ1D65oUhVGKQ2d2kZBRnsi"
+			]
+		},
+		"proto/event.proto.sol": {
+			"keccak256": "0xf18c4c09824522f54554c67b5c1ee0827b75d45e2975a2428c887a9a4d5559e4",
+			"license": "CC0",
+			"urls": [
+				"bzz-raw://23610438ad07385d6c9e7d176a8e5794dc2bf6c8ceda0d53bda1bb7e1fbbc553",
+				"dweb:/ipfs/Qmc31dQ4dtdAsKLGCSM5pPtggWdnEVyarrfc3snPrLYpZ5"
+			]
+		}
+	},
+	"version": 1
+}

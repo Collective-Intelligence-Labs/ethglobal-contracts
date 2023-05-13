@@ -13,8 +13,8 @@ contract AMMState is AggregateState, Utils {
 
     uint256 constant PRECISION = 1_000_000;
 
-    address token1;
-    address token2;
+    address public token1;
+    address public token2;
 
     uint256 token1Supply;
     uint256 token2Supply;
