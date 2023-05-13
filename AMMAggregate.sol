@@ -21,45 +21,46 @@ contract AMMAggregate is Aggregate, Utils {
 
         if (cmd.cmd_type == CommandType.CREATE_AMM) {
             (bool success, , CreateAMMPayload memory payload) = CreateAMMPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
-            require(success, "CreateAMMPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             create(payload);
         }
 
         if (cmd.cmd_type == CommandType.DEPOSIT_FUNDS) {
             (bool success, , DepositFundsPayload memory payload) = DepositFundsPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
-            require(success, "DepositFundsPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             deposit(payload);
         }
 
         if (cmd.cmd_type == CommandType.WITHDRAW_FUNDS) {
             (bool success, , WithdrawFundsPayload memory payload) = WithdrawFundsPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
-            require(success, "WithdrawFundsPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             withdraw(payload);
         }
 
         if (cmd.cmd_type == CommandType.ADD_LIQUIDITY) {
             (bool success, , AddLiquidityPayload memory payload) = AddLiquidityPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
-            require(success, "AddLiquidityPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             addLiquidity(payload);
         }
 
         if (cmd.cmd_type == CommandType.REMOVE_LIQUIDITY) {
             (bool success, , RemoveLiquidityPayload memory payload) = RemoveLiquidityPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
-            require(success, "RemoveLiquidityPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             removeLiquidity(payload);
         }
 
         if (cmd.cmd_type == CommandType.SWAP) {
             (bool success, , SwapTokensPayload memory payload) = SwapTokensPayloadCodec.decode(0, cmd.cmd_payload, uint64(cmd.cmd_payload.length));
-            require(success, "SwapTokensPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             swap(payload);
         }
+    }
+
+    function createEvent(uint64 idx, DomainEventType event_type, bytes memory payload) private returns (DomainEvent memory evnt) {
+        DomainEvent memory evnt;
+        evnt.evnt_idx = idx;
+        evnt.evnt_type = event_type;
+        evnt.evnt_payload = payload;
     }
 
     function create(CreateAMMPayload memory payload) private {
@@ -73,11 +74,7 @@ contract AMMAggregate is Aggregate, Utils {
         evnt_payload.supply1 = payload.token1_balance;
         evnt_payload.supply2 = payload.token1_balance;
 
-        DomainEvent memory evnt;
-        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
-        evnt.evnt_type = DomainEventType.AMM_CREATED;
-        evnt.evnt_payload = AMMCreatedPayloadCodec.encode(evnt_payload);
-
+        DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.AMM_CREATED, AMMCreatedPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);
     }
 
@@ -85,19 +82,15 @@ contract AMMAggregate is Aggregate, Utils {
         AMMState s = AMMState(address(state));
 
         require(s.isCreated() == true, "AMM does not exist");
-        require(compareStrings(s.token1(), payload.token) || compareStrings(s.token2(), payload.token), "Please deposit supported tokens");
-        require(payload.amount > 0, "Not enough funds to deposit");
+        require(compareStrings(s.token1(), payload.token) || compareStrings(s.token2(), payload.token), "Not supported token");
+        require(payload.amount > 0, "Not enough funds");
 
         FundsDepositedPayload memory evnt_payload;
         evnt_payload.account = payload.account;
         evnt_payload.amount = payload.amount;
         evnt_payload.asset = payload.token;
 
-        DomainEvent memory evnt;
-        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
-        evnt.evnt_type = DomainEventType.FUNDS_DEPOSITED;
-        evnt.evnt_payload = FundsDepositedPayloadCodec.encode(evnt_payload);
-
+        DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.FUNDS_DEPOSITED, FundsDepositedPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);
     }
 
@@ -105,15 +98,15 @@ contract AMMAggregate is Aggregate, Utils {
         AMMState s = AMMState(address(state));
 
         require(s.isCreated() == true, "AMM does not exist");
-        require(compareStrings(s.token1(), payload.token) || compareStrings(s.token2(), payload.token), "Please deposit supported tokens");
+        require(compareStrings(s.token1(), payload.token) || compareStrings(s.token2(), payload.token), "Not  supported token");
         
         address account = bytesToAddress(payload.account);
         if (compareStrings(s.token1(), payload.token)) {
-            require(s.balance1(account) > payload.amount, "Not enough funds to withdraw");
+            require(s.balance1(account) > payload.amount, "Not enough balance");
         }
 
         if (compareStrings(s.token2(), payload.token)) {
-            require(s.balance2(account) > payload.amount, "Not enough funds to withdraw");
+            require(s.balance2(account) > payload.amount, "Not enough balance");
         }
 
         FundsWithdrawnPayload memory evnt_payload;
@@ -121,11 +114,8 @@ contract AMMAggregate is Aggregate, Utils {
         evnt_payload.amount = payload.amount;
         evnt_payload.asset = payload.token;
 
-        DomainEvent memory evnt;
-        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
-        evnt.evnt_type = DomainEventType.FUNDS_WITHDRAWN;
-        evnt.evnt_payload = FundsWithdrawnPayloadCodec.encode(evnt_payload);
-
+        
+        DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.FUNDS_WITHDRAWN, FundsWithdrawnPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);
     }
 
@@ -135,19 +125,15 @@ contract AMMAggregate is Aggregate, Utils {
         require(s.isCreated() == true, "AMM does not exist");
         
         address account = bytesToAddress(payload.account);
-        require(s.balance1(account) >= payload.amount1, "Not enough balance to add liquidity");
-        require(s.balance2(account) >= payload.amount2, "Not enough balance to add liquidity");
+        require(s.balance1(account) >= payload.amount1 
+            && s.balance2(account) >= payload.amount2, "Not enough balance");
 
         LiquidityAddedPayload memory evnt_payload;
         evnt_payload.account = payload.account;
         evnt_payload.amount1 = payload.amount1;
         evnt_payload.amount2 = payload.amount2;
 
-        DomainEvent memory evnt;
-        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
-        evnt.evnt_type = DomainEventType.LIQUIDITY_ADDED;
-        evnt.evnt_payload = LiquidityAddedPayloadCodec.encode(evnt_payload);
-
+        DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.LIQUIDITY_ADDED, LiquidityAddedPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);
     }
 
@@ -157,18 +143,14 @@ contract AMMAggregate is Aggregate, Utils {
         require(s.isCreated() == true, "AMM does not exist");
         
         address account = bytesToAddress(payload.account);
-        require(s.shares(account) >= payload.share, "Not enough share to remove liquidity");
+        require(s.shares(account) >= payload.share, "Not enough share");
 
         // Calculate amounts when altering state
         LiquidityRemovedPayload memory evnt_payload;
         evnt_payload.account = payload.account;
         evnt_payload.shares = payload.share;
 
-        DomainEvent memory evnt;
-        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
-        evnt.evnt_type = DomainEventType.LIQUIDITY_REMOVED;
-        evnt.evnt_payload = LiquidityRemovedPayloadCodec.encode(evnt_payload);
-
+        DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.LIQUIDITY_REMOVED, LiquidityRemovedPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);
     }
 
@@ -182,13 +164,13 @@ contract AMMAggregate is Aggregate, Utils {
 
         require(s.isCreated() == true, "AMM does not exist");
         if (compareStrings(s.token1(), payload.token)) {
-            require(s.balance1(account) >= payload.amount, "Not enough token1 to swap");
+            require(s.balance1(account) >= payload.amount, "Not enough token1");
 
             toSwapped = s.getSwapToken1Estimate(payload.amount);
             toToken = s.token2();
         }
         if (compareStrings(s.token2(), payload.token)) {
-            require(s.balance2(account) >= payload.amount, "Not enough token2 to swap");
+            require(s.balance2(account) >= payload.amount, "Not enough token2");
         
             toSwapped = s.getSwapToken2Estimate(payload.amount);
             toToken = s.token1();
@@ -201,11 +183,7 @@ contract AMMAggregate is Aggregate, Utils {
         evnt_payload.amount_to = uint64(toSwapped);
         evnt_payload.asset_to = toToken;
 
-        DomainEvent memory evnt;
-        evnt.evnt_idx = eventsCount; // counter will be incremented in applyEvent
-        evnt.evnt_type = DomainEventType.TOKENS_SWAPPED;
-        evnt.evnt_payload = TokensSwapedPayloadCodec.encode(evnt_payload);
-
+        DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.TOKENS_SWAPPED, TokensSwapedPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);
     }
 }

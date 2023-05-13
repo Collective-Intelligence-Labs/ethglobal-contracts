@@ -36,49 +36,43 @@ contract AMMState is AggregateState, Utils {
 
         if (evnt.evnt_type == DomainEventType.AMM_CREATED) {
             (bool success, , AMMCreatedPayload memory payload) = AMMCreatedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "AMMCreatedPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             onCreated(payload);
         }
 
         if (evnt.evnt_type == DomainEventType.FUNDS_DEPOSITED) {
             (bool success, , FundsDepositedPayload memory payload) = FundsDepositedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "FundsDepositedPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             onFundsDeposited(payload);
         }
 
         if (evnt.evnt_type == DomainEventType.FUNDS_WITHDRAWN) {
             (bool success, , FundsWithdrawnPayload memory payload) = FundsWithdrawnPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "FundsWithdrawnPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             onFundsWithdrawn(payload);
         }
 
         if (evnt.evnt_type == DomainEventType.LIQUIDITY_ADDED) {
             (bool success, , LiquidityAddedPayload memory payload) = LiquidityAddedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "LiquidityAddedPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             onLiquidityAdded(payload);
         }
 
         if (evnt.evnt_type == DomainEventType.LIQUIDITY_REMOVED) {
             (bool success, , LiquidityRemovedPayload memory payload) = LiquidityRemovedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "LiquidityRemovedPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             onLiquidityRemoved(payload);
         }
 
         if (evnt.evnt_type == DomainEventType.TOKENS_SWAPPED) {
             (bool success, , TokensSwapedPayload memory payload) = TokensSwapedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "TokensSwapedPayload deserialization failed");
-
+            require(success, "Deserialization failed");
             onTokensSwapped(payload);
         }
     }
 
     function getTokensEstimateForShare(uint _share) public view returns(uint amountToken1, uint amountToken2) {
-        require(totalShares > 0, "No liquidity in pool");
+        require(totalShares > 0, "No liquidity");
         require(_share <= totalShares, "Share should be less than totalShare");
         
         amountToken1 = _share.mul(totalToken1).div(totalShares);
@@ -105,14 +99,7 @@ contract AMMState is AggregateState, Utils {
 
     function onCreated(AMMCreatedPayload memory payload) private {
         token1 = payload.asset1;
-        totalToken1 = 0;
-
         token2 = payload.asset2;
-        totalToken2 = 0;
-
-        K = totalToken1.mul(totalToken2);
-
-        totalShares = 0 * PRECISION;
 
         address ownerAddress = bytesToAddress(payload.owner);
 
@@ -159,7 +146,7 @@ contract AMMState is AggregateState, Utils {
         } else{
             uint share1 = totalShares.mul(payload.amount1).div(totalToken1);
             uint share2 = totalShares.mul(payload.amount2).div(totalToken2);
-            require(share1 == share2, "Equivalent value of tokens not provided...");
+            require(share1 == share2, "Equivalent value of tokens not provided");
             share = share1;
         }
 
