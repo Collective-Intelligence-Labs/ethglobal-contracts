@@ -19,8 +19,9 @@ contract AggregateRepository is Ownable {
     
     uint constant BATCH_LIMIT = 1000; // for demo purposes only
 
-    constructor(address eventstore_) {
+    constructor(address eventstore_, address dispatcher_) {
         eventStore = EventStore(eventstore_);
+        dispatcher = dispatcher_;
     }
 
     modifier onlyDispatcher {

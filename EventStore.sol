@@ -90,7 +90,7 @@ contract EventStore is Ownable {
     }
 
 
-    function append(string memory aggregateId, DomainEvent memory evnt) public onlyRelay {
+    function append(string memory aggregateId, DomainEvent memory evnt) external { // TODO: add Repository authorization
         add(aggregateId, evnt);
     }
 

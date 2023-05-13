@@ -304,24 +304,59 @@ library CommandCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.aggregate_id__Key.length);
+        len += uint64(encodedInstance.aggregate_id__Length.length);
         len += uint64(encodedInstance.aggregate_id.length);
+        len += uint64(encodedInstance.cmd_signature__Key.length);
+        len += uint64(encodedInstance.cmd_signature__Length.length);
         len += uint64(encodedInstance.cmd_signature.length);
+        len += uint64(encodedInstance.cmd_type__Key.length);
         len += uint64(encodedInstance.cmd_type.length);
+        len += uint64(encodedInstance.cmd_payload__Key.length);
+        len += uint64(encodedInstance.cmd_payload__Length.length);
         len += uint64(encodedInstance.cmd_payload.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.aggregate_id__Key.length) {
+            finalEncoded[index++] = encodedInstance.aggregate_id__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.aggregate_id__Length.length) {
+            finalEncoded[index++] = encodedInstance.aggregate_id__Length[j++];
+        }
+        j = 0;
         while (j < encodedInstance.aggregate_id.length) {
             finalEncoded[index++] = encodedInstance.aggregate_id[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.cmd_signature__Key.length) {
+            finalEncoded[index++] = encodedInstance.cmd_signature__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.cmd_signature__Length.length) {
+            finalEncoded[index++] = encodedInstance.cmd_signature__Length[j++];
         }
         j = 0;
         while (j < encodedInstance.cmd_signature.length) {
             finalEncoded[index++] = encodedInstance.cmd_signature[j++];
         }
         j = 0;
+        while (j < encodedInstance.cmd_type__Key.length) {
+            finalEncoded[index++] = encodedInstance.cmd_type__Key[j++];
+        }
+        j = 0;
         while (j < encodedInstance.cmd_type.length) {
             finalEncoded[index++] = encodedInstance.cmd_type[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.cmd_payload__Key.length) {
+            finalEncoded[index++] = encodedInstance.cmd_payload__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.cmd_payload__Length.length) {
+            finalEncoded[index++] = encodedInstance.cmd_payload__Length[j++];
         }
         j = 0;
         while (j < encodedInstance.cmd_payload.length) {
@@ -541,14 +576,34 @@ library MintNFTPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.hash__Key.length);
+        len += uint64(encodedInstance.hash__Length.length);
         len += uint64(encodedInstance.hash.length);
+        len += uint64(encodedInstance.owner__Key.length);
+        len += uint64(encodedInstance.owner__Length.length);
         len += uint64(encodedInstance.owner.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.hash__Key.length) {
+            finalEncoded[index++] = encodedInstance.hash__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.hash__Length.length) {
+            finalEncoded[index++] = encodedInstance.hash__Length[j++];
+        }
+        j = 0;
         while (j < encodedInstance.hash.length) {
             finalEncoded[index++] = encodedInstance.hash[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.owner__Key.length) {
+            finalEncoded[index++] = encodedInstance.owner__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.owner__Length.length) {
+            finalEncoded[index++] = encodedInstance.owner__Length[j++];
         }
         j = 0;
         while (j < encodedInstance.owner.length) {
@@ -768,14 +823,34 @@ library TransferNFTPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.hash__Key.length);
+        len += uint64(encodedInstance.hash__Length.length);
         len += uint64(encodedInstance.hash.length);
+        len += uint64(encodedInstance.to__Key.length);
+        len += uint64(encodedInstance.to__Length.length);
         len += uint64(encodedInstance.to.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.hash__Key.length) {
+            finalEncoded[index++] = encodedInstance.hash__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.hash__Length.length) {
+            finalEncoded[index++] = encodedInstance.hash__Length[j++];
+        }
+        j = 0;
         while (j < encodedInstance.hash.length) {
             finalEncoded[index++] = encodedInstance.hash[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.to__Key.length) {
+            finalEncoded[index++] = encodedInstance.to__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.to__Length.length) {
+            finalEncoded[index++] = encodedInstance.to__Length[j++];
         }
         j = 0;
         while (j < encodedInstance.to.length) {
@@ -1085,24 +1160,54 @@ library CreateAMMPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.token1__Key.length);
+        len += uint64(encodedInstance.token1__Length.length);
         len += uint64(encodedInstance.token1.length);
+        len += uint64(encodedInstance.token2__Key.length);
+        len += uint64(encodedInstance.token2__Length.length);
         len += uint64(encodedInstance.token2.length);
+        len += uint64(encodedInstance.token1_balance__Key.length);
         len += uint64(encodedInstance.token1_balance.length);
+        len += uint64(encodedInstance.token2_balance__Key.length);
         len += uint64(encodedInstance.token2_balance.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.token1__Key.length) {
+            finalEncoded[index++] = encodedInstance.token1__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.token1__Length.length) {
+            finalEncoded[index++] = encodedInstance.token1__Length[j++];
+        }
+        j = 0;
         while (j < encodedInstance.token1.length) {
             finalEncoded[index++] = encodedInstance.token1[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.token2__Key.length) {
+            finalEncoded[index++] = encodedInstance.token2__Key[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.token2__Length.length) {
+            finalEncoded[index++] = encodedInstance.token2__Length[j++];
         }
         j = 0;
         while (j < encodedInstance.token2.length) {
             finalEncoded[index++] = encodedInstance.token2[j++];
         }
         j = 0;
+        while (j < encodedInstance.token1_balance__Key.length) {
+            finalEncoded[index++] = encodedInstance.token1_balance__Key[j++];
+        }
+        j = 0;
         while (j < encodedInstance.token1_balance.length) {
             finalEncoded[index++] = encodedInstance.token1_balance[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.token2_balance__Key.length) {
+            finalEncoded[index++] = encodedInstance.token2_balance__Key[j++];
         }
         j = 0;
         while (j < encodedInstance.token2_balance.length) {
@@ -1308,14 +1413,24 @@ library AddLiquidityPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.amount1__Key.length);
         len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2__Key.length);
         len += uint64(encodedInstance.amount2.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.amount1__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount1__Key[j++];
+        }
+        j = 0;
         while (j < encodedInstance.amount1.length) {
             finalEncoded[index++] = encodedInstance.amount1[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount2__Key[j++];
         }
         j = 0;
         while (j < encodedInstance.amount2.length) {
@@ -1476,10 +1591,15 @@ library RemoveLiquidityPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.share__Key.length);
         len += uint64(encodedInstance.share.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
+        j = 0;
+        while (j < encodedInstance.share__Key.length) {
+            finalEncoded[index++] = encodedInstance.share__Key[j++];
+        }
         j = 0;
         while (j < encodedInstance.share.length) {
             finalEncoded[index++] = encodedInstance.share[j++];
@@ -1684,14 +1804,24 @@ library SwapTokensPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.amount1__Key.length);
         len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2__Key.length);
         len += uint64(encodedInstance.amount2.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.amount1__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount1__Key[j++];
+        }
+        j = 0;
         while (j < encodedInstance.amount1.length) {
             finalEncoded[index++] = encodedInstance.amount1[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount2__Key[j++];
         }
         j = 0;
         while (j < encodedInstance.amount2.length) {
@@ -1897,14 +2027,24 @@ library DepositFundsPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.amount1__Key.length);
         len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2__Key.length);
         len += uint64(encodedInstance.amount2.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.amount1__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount1__Key[j++];
+        }
+        j = 0;
         while (j < encodedInstance.amount1.length) {
             finalEncoded[index++] = encodedInstance.amount1[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount2__Key[j++];
         }
         j = 0;
         while (j < encodedInstance.amount2.length) {
@@ -2110,14 +2250,24 @@ library WithdrawFundsPayloadCodec {
         bytes memory finalEncoded;
         index = 0;
         len = 0;
+        len += uint64(encodedInstance.amount1__Key.length);
         len += uint64(encodedInstance.amount1.length);
+        len += uint64(encodedInstance.amount2__Key.length);
         len += uint64(encodedInstance.amount2.length);
         finalEncoded = new bytes(len);
 
         uint64 j;
         j = 0;
+        while (j < encodedInstance.amount1__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount1__Key[j++];
+        }
+        j = 0;
         while (j < encodedInstance.amount1.length) {
             finalEncoded[index++] = encodedInstance.amount1[j++];
+        }
+        j = 0;
+        while (j < encodedInstance.amount2__Key.length) {
+            finalEncoded[index++] = encodedInstance.amount2__Key[j++];
         }
         j = 0;
         while (j < encodedInstance.amount2.length) {
