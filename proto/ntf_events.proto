@@ -1,0 +1,10 @@
+message NFTMintedPayload {
+    bytes hash = 1;
+    bytes owner = 2;
+}
+
+message NFTTransferedPayload {
+    bytes hash = 1;
+    bytes from = 2;
+    bytes to = 3;
+}

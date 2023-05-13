@@ -1,0 +1,36 @@
+message CreateAMMPayload {
+  bytes token1 = 1;
+  bytes token2 = 2;
+  uint64 token1_balance = 3;
+  uint64 token2_balance = 4;
+  bytes owner = 5;
+}
+
+message AddLiquidityPayload {
+  uint64 amount1 = 1;
+  uint64 amount2 = 2;
+  bytes account = 3;
+}
+
+message RemoveLiquidityPayload {
+  uint64 share = 1;
+  bytes account = 2;
+}
+
+message SwapTokensPayload {
+  uint64 amount = 1;
+  bytes token = 2;
+  bytes account = 3;
+}
+
+message DepositFundsPayload {
+  uint64 amount = 1;
+  bytes token = 2;
+  bytes account = 3;
+}
+
+message WithdrawFundsPayload {
+  uint64 amount = 1;
+  bytes token = 2;
+  bytes account = 3;
+}

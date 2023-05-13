@@ -1,0 +1,9 @@
+message MintNFTPayload {
+  bytes hash = 1;
+  bytes owner = 2;
+}
+
+message TransferNFTPayload {
+  bytes hash = 1;
+  bytes to = 2;
+}
