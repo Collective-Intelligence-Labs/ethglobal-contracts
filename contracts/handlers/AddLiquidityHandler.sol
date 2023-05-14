@@ -7,7 +7,7 @@ import "../AggregateRepository.sol";
 import "../Utils.sol";
 
 
-contract CreateAMMHandler is Ownable {
+contract AddLiquidityHandler is Ownable {
     
     AggregateRepository public repository;
 
