@@ -79,19 +79,19 @@ contract AMMAggregate is Aggregate {
         applyEvent(evnt);
     }
 
-    function addLiquidity(AddLiquidityPayload memory payload) private {
+    function addLiquidity(uint64 amount1, uint64 amount2, bytes memory accountBytes) public {
         AMMState s = AMMState(address(state));
 
         require(s.isCreated() == true, "AMM does not exist");
         
-        address account = Utils.bytesToAddress(payload.account);
-        require(s.balance1(account) >= payload.amount1 
-            && s.balance2(account) >= payload.amount2, "Not enough balance");
+        address account = Utils.bytesToAddress(accountBytes);
+        require(s.balance1(account) >= amount1 
+            && s.balance2(account) >= amount2, "Not enough balance");
 
         LiquidityAddedPayload memory evnt_payload;
-        evnt_payload.account = payload.account;
-        evnt_payload.amount1 = payload.amount1;
-        evnt_payload.amount2 = payload.amount2;
+        evnt_payload.account = accountBytes;
+        evnt_payload.amount1 = amount1;
+        evnt_payload.amount2 = amount2;
 
         DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.LIQUIDITY_ADDED, LiquidityAddedPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);
