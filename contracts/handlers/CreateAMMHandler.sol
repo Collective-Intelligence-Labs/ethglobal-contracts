@@ -19,6 +19,11 @@ contract CreateAMMHandler is Ownable {
     {
         (bool success, , CreateAMMPayload memory cmd) = CreateAMMPayloadCodec.decode(0, payload, uint64(payload.length));
         Aggregate aggregate = repository.get(aggregateId);
+        if (address(aggregate) == address(0))
+        {
+            aggregate = new AMMAggregate(aggregateId);
+            repository.addAggregate(aggregateId, address(aggregate));
+        }
         AMMAggregate aggregateAmm  = AMMAggregate(address(aggregate));
         aggregateAmm.create(cmd.token1, cmd.token2, cmd.token1_balance, cmd.token2_balance);
         repository.save(aggregateAmm);

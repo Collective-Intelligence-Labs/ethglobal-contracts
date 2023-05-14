@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./EventStore.sol";
 import "./Aggregate.sol";
 import "./AMMAggregate.sol";
-import "./proto/event.proto.sol";
-import "./proto/command.proto.sol";
 
 
 contract AggregateRepository is Ownable {
@@ -37,16 +35,14 @@ contract AggregateRepository is Ownable {
         eventStore = EventStore(eventStore_);
     }
 
-    function addAggregate(string memory id) public onlyOwner { // for demo purposes only
-        aggregates[id] = address(new AMMAggregate(id));
+    function addAggregate(string memory id, address aggregate) public onlyOwner { // for demo purposes only
+        aggregates[id] = aggregate;
     }
 
     function get(string memory aggregateId) external onlyDispatcher returns (Aggregate) {
         if (aggregates[aggregateId] == address(0)) {
-           addAggregate(aggregateId);
+           return Aggregate(address(0));
         }
-        
-        require(aggregates[aggregateId] != address(0), "No aggregate found for provided id");
 
         DomainEvent[] memory evnts = eventStore.pull(aggregateId, 0, BATCH_LIMIT);
         Aggregate(aggregates[aggregateId]).setup(evnts);
