@@ -2,7 +2,7 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
-abstract contract Utils {
+library Utils {
 
     function bytesToAddress(bytes memory data) internal pure returns (address) {
         require(data.length == 20, "Invalid address format");

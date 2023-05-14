@@ -17,13 +17,6 @@ abstract contract Aggregate is Ownable {
     uint64 eventsCount;
 
 
-    function handle(Command memory cmd) external {
-        require(isReady, "Aggregate is not set up");
-        handleCommand(cmd);
-    }
-
-    function handleCommand(Command memory cmd) internal virtual;
-
     function applyEvent(DomainEvent memory evnt) internal {
         state.spool(evnt);
         eventsCount++;

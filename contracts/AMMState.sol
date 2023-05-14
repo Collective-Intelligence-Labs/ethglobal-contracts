@@ -9,7 +9,7 @@ import "./proto/command.proto.sol";
 import "./proto/event.proto.sol";
 
 
-contract AMMState is AggregateState, Utils {
+contract AMMState is AggregateState {
 
     using SafeMath for uint;
 
@@ -101,7 +101,7 @@ contract AMMState is AggregateState, Utils {
         token1 = payload.asset1;
         token2 = payload.asset2;
 
-        address ownerAddress = bytesToAddress(payload.owner);
+        address ownerAddress = Utils.bytesToAddress(payload.owner);
 
         balance1[ownerAddress] = payload.supply1;
         balance2[ownerAddress] = payload.supply2;
@@ -111,12 +111,12 @@ contract AMMState is AggregateState, Utils {
     }
 
     function onFundsDeposited(FundsDepositedPayload memory payload) private {
-        address account = bytesToAddress(payload.account);
+        address account = Utils.bytesToAddress(payload.account);
         
-        if (compareStrings(token1, payload.asset)) {
+        if (Utils.compareStrings(token1, payload.asset)) {
             balance1[account] += payload.amount;
         }
-        if (compareStrings(token2, payload.asset)) {
+        if (Utils.compareStrings(token2, payload.asset)) {
             balance2[account] += payload.amount;
         }
 
@@ -126,19 +126,19 @@ contract AMMState is AggregateState, Utils {
     }
 
     function onFundsWithdrawn(FundsWithdrawnPayload memory payload) private {
-        address account = bytesToAddress(payload.account);
+        address account = Utils.bytesToAddress(payload.account);
         
         // TODO: withdraw to account
-        if (compareStrings(token1, payload.asset)) {
+        if (Utils.compareStrings(token1, payload.asset)) {
             balance1[account] -= payload.amount;
         }
-        if (compareStrings(token2, payload.asset)) {
+        if (Utils.compareStrings(token2, payload.asset)) {
             balance2[account] -= payload.amount;
         }
     }
 
     function onLiquidityAdded(LiquidityAddedPayload memory payload) private {
-        address account = bytesToAddress(payload.account);
+        address account = Utils.bytesToAddress(payload.account);
         uint share = 0;
 
         if(totalShares == 0) { // Genesis liquidity is issued 100 Shares
@@ -163,7 +163,7 @@ contract AMMState is AggregateState, Utils {
     }
 
     function onLiquidityRemoved(LiquidityRemovedPayload memory payload) private {
-        address account = bytesToAddress(payload.account);
+        address account = Utils.bytesToAddress(payload.account);
         uint _share = payload.shares;
         
         (uint amountToken1, uint amountToken2) = getTokensEstimateForShare(_share);
@@ -181,10 +181,10 @@ contract AMMState is AggregateState, Utils {
 
     function onTokensSwapped(TokensSwapedPayload memory payload) private {
         
-        address account = bytesToAddress(payload.account);
+        address account = Utils.bytesToAddress(payload.account);
         
         // Swap from token1 to token2
-        if (compareStrings(token1, payload.asset_from)) {
+        if (Utils.compareStrings(token1, payload.asset_from)) {
             balance1[account] -= payload.amount_from;
             totalToken1 += payload.amount_from;
             totalToken2 -= payload.amount_to;
