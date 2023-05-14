@@ -97,18 +97,18 @@ contract AMMAggregate is Aggregate {
         applyEvent(evnt);
     }
 
-    function removeLiquidity(RemoveLiquidityPayload memory payload) private {
+    function removeLiquidity(uint64 share, bytes memory accountBytes) public {
         AMMState s = AMMState(address(state));
 
         require(s.isCreated() == true, "AMM does not exist");
         
-        address account = Utils.bytesToAddress(payload.account);
-        require(s.shares(account) >= payload.share, "Not enough share");
+        address account = Utils.bytesToAddress(accountBytes);
+        require(s.shares(account) >= share, "Not enough share");
 
         // Calculate amounts when altering state
         LiquidityRemovedPayload memory evnt_payload;
-        evnt_payload.account = payload.account;
-        evnt_payload.shares = payload.share;
+        evnt_payload.account = accountBytes;
+        evnt_payload.shares = share;
 
         DomainEvent memory evnt = createEvent(eventsCount, DomainEventType.LIQUIDITY_REMOVED, LiquidityRemovedPayloadCodec.encode(evnt_payload));
         applyEvent(evnt);

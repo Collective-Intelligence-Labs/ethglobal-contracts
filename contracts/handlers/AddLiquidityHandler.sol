@@ -21,6 +21,6 @@ contract CreateAMMHandler is Ownable {
         Aggregate aggregate = repository.get(aggregateId);
         AMMAggregate aggregateAmm  = AMMAggregate(address(aggregate));
         aggregateAmm.addLiquidity(cmd.amount1, cmd.amount2, cmd.account);
-        DomainEvent[] memory recentChanges = repository.save(aggregateAmm);
+        repository.save(aggregateAmm);
     }
 }

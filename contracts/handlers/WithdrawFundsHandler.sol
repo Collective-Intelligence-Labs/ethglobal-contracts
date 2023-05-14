@@ -17,10 +17,10 @@ contract CreateAMMHandler is Ownable {
 
     function handle(bytes memory payload, string memory aggregateId) external
     {
-        (bool success, , CreateAMMPayload memory cmd) = CreateAMMPayloadCodec.decode(0, payload, uint64(payload.length));
+        (bool success, , WithdrawFundsPayload memory cmd) = WithdrawFundsPayloadCodec.decode(0, payload, uint64(payload.length));
         Aggregate aggregate = repository.get(aggregateId);
         AMMAggregate aggregateAmm  = AMMAggregate(address(aggregate));
-        aggregateAmm.create(cmd.token1, cmd.token2, cmd.token1_balance, cmd.token2_balance);
+        aggregateAmm.withdraw(cmd.token, cmd.account, cmd.amount);
         repository.save(aggregateAmm);
     }
 }

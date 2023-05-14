@@ -7,7 +7,7 @@ import "../AggregateRepository.sol";
 import "../Utils.sol";
 
 
-contract CreateAMMHandler is Ownable {
+contract DepositFundsHandler is Ownable {
     
     AggregateRepository public repository;
 
@@ -17,10 +17,10 @@ contract CreateAMMHandler is Ownable {
 
     function handle(bytes memory payload, string memory aggregateId) external
     {
-        (bool success, , CreateAMMPayload memory cmd) = CreateAMMPayloadCodec.decode(0, payload, uint64(payload.length));
+        (bool success, , DepositFundsPayload memory cmd) = DepositFundsPayloadCodec.decode(0, payload, uint64(payload.length));
         Aggregate aggregate = repository.get(aggregateId);
         AMMAggregate aggregateAmm  = AMMAggregate(address(aggregate));
-        aggregateAmm.create(cmd.token1, cmd.token2, cmd.token1_balance, cmd.token2_balance);
+        aggregateAmm.deposit(cmd.token, cmd.account, cmd.amount);
         repository.save(aggregateAmm);
     }
 }
