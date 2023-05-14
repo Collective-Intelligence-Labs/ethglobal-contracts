@@ -203,20 +203,17 @@ contract AMMState is AggregateState {
         for (uint i = 0; i < shareholders.length; i++) {
             delete shares[shareholders[i]];
         }
-        
         delete shareholders;
-        totalShares = 0 * PRECISION;
-
         for (uint i = 0; i < balanceOwners.length; i++) {
             delete balance1[balanceOwners[i]];
             delete balance2[balanceOwners[i]];
         }
         
         delete balanceOwners;
+        delete token1;
+        delete token2;
 
-        token1 = '';
-        token2 = '';
-
+        totalShares = 0;
         totalToken1 = 0;
         totalToken2 = 0;
     }
