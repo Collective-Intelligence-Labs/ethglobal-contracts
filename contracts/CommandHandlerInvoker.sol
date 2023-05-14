@@ -1,9 +1,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CommandHandlersRegistery.sol";
-
-contract CommandHandlerInvoker is Ownable {
+contract CommandHandlerInvoker {
 
     function invoke(address handler, bytes memory cmd, string memory aggregateId) external returns (bool success, bytes memory result) 
     {
