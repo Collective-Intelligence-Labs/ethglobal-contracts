@@ -79,12 +79,6 @@ contract AMMState is AggregateState {
     
     function on(DomainEvent memory evnt) internal override { 
 
-        if (evnt.evnt_type == DomainEventType.FUNDS_DEPOSITED) {
-            (bool success, , FundsDepositedPayload memory payload) = FundsDepositedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "Deserialization failed");
-            onFundsDeposited(payload);
-        }
-
         if (evnt.evnt_type == DomainEventType.FUNDS_WITHDRAWN) {
             (bool success, , FundsWithdrawnPayload memory payload) = FundsWithdrawnPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
             require(success, "Deserialization failed");
@@ -141,21 +135,6 @@ contract AMMState is AggregateState {
         balanceOwners.push(ownerAddress);
 
         isCreated = true;
-    }
-
-    function onFundsDeposited(FundsDepositedPayload memory payload) private {
-        address account = Utils.bytesToAddress(payload.account);
-        
-        if (Utils.compareStrings(token1, payload.asset)) {
-            balance1[account] += payload.amount;
-        }
-        if (Utils.compareStrings(token2, payload.asset)) {
-            balance2[account] += payload.amount;
-        }
-
-        if (balance1[account] == 0 && balance2[account] == 0) {
-            balanceOwners.push(account);
-        }
     }
 
     function onFundsWithdrawn(FundsWithdrawnPayload memory payload) private {
