@@ -79,12 +79,6 @@ contract AMMState is AggregateState {
     
     function on(DomainEvent memory evnt) internal override { 
 
-        if (evnt.evnt_type == DomainEventType.FUNDS_WITHDRAWN) {
-            (bool success, , FundsWithdrawnPayload memory payload) = FundsWithdrawnPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "Deserialization failed");
-            onFundsWithdrawn(payload);
-        }
-
         if (evnt.evnt_type == DomainEventType.LIQUIDITY_REMOVED) {
             (bool success, , LiquidityRemovedPayload memory payload) = LiquidityRemovedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
             require(success, "Deserialization failed");
@@ -136,20 +130,6 @@ contract AMMState is AggregateState {
 
         isCreated = true;
     }
-
-    function onFundsWithdrawn(FundsWithdrawnPayload memory payload) private {
-        address account = Utils.bytesToAddress(payload.account);
-        
-        // TODO: withdraw to account
-        if (Utils.compareStrings(token1, payload.asset)) {
-            balance1[account] -= payload.amount;
-        }
-        if (Utils.compareStrings(token2, payload.asset)) {
-            balance2[account] -= payload.amount;
-        }
-    }
-
-    
 
     function onLiquidityRemoved(LiquidityRemovedPayload memory payload) private {
         address account = Utils.bytesToAddress(payload.account);
