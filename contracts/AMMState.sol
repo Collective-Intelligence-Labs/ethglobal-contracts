@@ -12,8 +12,6 @@ contract AMMState is AggregateState {
 
     using SafeMath for uint;
 
-    uint64 constant PRECISION = 1_000_000;
-
     bytes public token1;
     bytes public token2;
     uint public totalToken1;
@@ -81,12 +79,6 @@ contract AMMState is AggregateState {
     
     function on(DomainEvent memory evnt) internal override { 
 
-        if (evnt.evnt_type == DomainEventType.AMM_CREATED) {
-            (bool success, , AMMCreatedPayload memory payload) = AMMCreatedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "Deserialization failed");
-            onCreated(payload);
-        }
-
         if (evnt.evnt_type == DomainEventType.FUNDS_DEPOSITED) {
             (bool success, , FundsDepositedPayload memory payload) = FundsDepositedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
             require(success, "Deserialization failed");
@@ -97,12 +89,6 @@ contract AMMState is AggregateState {
             (bool success, , FundsWithdrawnPayload memory payload) = FundsWithdrawnPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
             require(success, "Deserialization failed");
             onFundsWithdrawn(payload);
-        }
-
-        if (evnt.evnt_type == DomainEventType.LIQUIDITY_ADDED) {
-            (bool success, , LiquidityAddedPayload memory payload) = LiquidityAddedPayloadCodec.decode(0, evnt.evnt_payload, uint64(evnt.evnt_payload.length));
-            require(success, "Deserialization failed");
-            onLiquidityAdded(payload);
         }
 
         if (evnt.evnt_type == DomainEventType.LIQUIDITY_REMOVED) {
@@ -184,30 +170,7 @@ contract AMMState is AggregateState {
         }
     }
 
-    function onLiquidityAdded(LiquidityAddedPayload memory payload) private {
-        address account = Utils.bytesToAddress(payload.account);
-        uint share = 0;
-
-        if(totalShares == 0) { // Genesis liquidity is issued 100 Shares
-            share = 100 * PRECISION;
-        } else{
-            uint share1 = totalShares.mul(payload.amount1).div(totalToken1);
-            uint share2 = totalShares.mul(payload.amount2).div(totalToken2);
-            require(share1 == share2, "Equivalent value of tokens not provided");
-            share = share1;
-        }
-
-        require(share > 0, "Asset value less than threshold for contribution!");
-        balance1[account] -= payload.amount1;
-        balance2[account] -= payload.amount2;
-
-        totalToken1 += payload.amount1;
-        totalToken2 += payload.amount2;
-        K = totalToken1.mul(totalToken2);
-
-        totalShares += share;
-        shares[account] += share;
-    }
+    
 
     function onLiquidityRemoved(LiquidityRemovedPayload memory payload) private {
         address account = Utils.bytesToAddress(payload.account);

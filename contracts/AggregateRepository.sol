@@ -42,9 +42,10 @@ contract AggregateRepository is Ownable {
     }
 
     function get(string memory aggregateId) external onlyDispatcher returns (Aggregate) {
-        if (aggregates[aggregateId] == address(0)) {
-           return Aggregate(address(0));
-        }
+        require(aggregates[aggregateId] != address(0), "Aggregate does not exist");
+        // if (aggregates[aggregateId] == address(0)) {
+        //    return Aggregate(address(0));
+        // }
 
         DomainEvent[] memory evnts = eventStore.pull(aggregateId, 0, BATCH_LIMIT);
         Aggregate aggregate = Aggregate(aggregates[aggregateId]);
