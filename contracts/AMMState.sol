@@ -5,7 +5,6 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./AggregateState.sol";
 import "./Utils.sol";
-import "./proto/command.proto.sol";
 import "./proto/event.proto.sol";
 
 
@@ -17,20 +16,68 @@ contract AMMState is AggregateState {
 
     bytes public token1;
     bytes public token2;
-    uint totalToken1;
-    uint totalToken2;
+    uint public totalToken1;
+    uint public totalToken2;
 
-    uint K;
+    uint public K;
 
     mapping (address => uint) public shares;
-    address[] shareholders;
-    uint totalShares;
+    address[] public shareholders;
+    uint public totalShares;
 
     mapping (address => uint) public balance1;
     mapping (address => uint) public balance2;
-    address[] balanceOwners;
+    address[] public balanceOwners;
 
     bool public isCreated = false;
+
+    function setToken1(bytes memory _token1) public {
+        token1 = _token1;
+    }
+
+    function setToken2(bytes memory _token2) public {
+        token2 = _token2;
+    }
+
+    function setTotalToken1(uint _totalToken1) public {
+        totalToken1 = _totalToken1;
+    }
+
+    function setTotalToken2(uint _totalToken2) public {
+        totalToken2 = _totalToken2;
+    }
+
+    function setK(uint _K) public {
+        K = _K;
+    }
+
+    function setShares(address holder, uint _shares) public {
+        shares[holder] = _shares;
+    }
+
+    function pushShareholder(address shareholder) public {
+        shareholders.push(shareholder);
+    }
+
+    function setTotalShares(uint _totalShares) public {
+        totalShares = _totalShares;
+    }
+
+    function setBalance1(address owner, uint _balance1) public {
+        balance1[owner] = _balance1;
+    }
+
+    function setBalance2(address owner, uint _balance2) public {
+        balance2[owner] = _balance2;
+    }
+
+    function pushBalanceOwner(address balanceOwner) public {
+        balanceOwners.push(balanceOwner);
+    }
+
+    function setIsCreated(bool created) public {
+        isCreated = created;
+    }
     
     function on(DomainEvent memory evnt) internal override { 
 
@@ -97,7 +144,7 @@ contract AMMState is AggregateState {
         if(amountToken1 == totalToken1) amountToken1--;
     }
 
-    function onCreated(AMMCreatedPayload memory payload) private {
+    function onCreated(AMMCreatedPayload memory payload) public {
         token1 = payload.asset1;
         token2 = payload.asset2;
 

@@ -12,14 +12,16 @@ contract AggregateRepository is Ownable {
 
     EventStore public eventStore;
     address public dispatcher;
+    address public stateSpooler;
 
     mapping(string => address) public aggregates;
     
     uint constant BATCH_LIMIT = 1000; // for demo purposes only
 
-    constructor(address eventstore_, address dispatcher_) {
+    constructor(address eventstore_, address dispatcher_, address stateSpooler_) {
         eventStore = EventStore(eventstore_);
         dispatcher = dispatcher_;
+        stateSpooler = stateSpooler_;
     }
 
     modifier onlyDispatcher {
@@ -45,9 +47,11 @@ contract AggregateRepository is Ownable {
         }
 
         DomainEvent[] memory evnts = eventStore.pull(aggregateId, 0, BATCH_LIMIT);
-        Aggregate(aggregates[aggregateId]).setup(evnts);
+        Aggregate aggregate = Aggregate(aggregates[aggregateId]);
+        aggregate.setStateSpooler(stateSpooler);
+        aggregate.setup(evnts);
 
-        return Aggregate(aggregates[aggregateId]);
+        return aggregate;
     }
 
     function save(Aggregate aggregate) external onlyDispatcher returns (DomainEvent[] memory) {
